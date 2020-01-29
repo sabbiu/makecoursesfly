@@ -16,7 +16,7 @@ describe('AppController', () => {
 
   describe('root', () => {
     it(`should return '{status: "success"}'`, () => {
-      expect(appController.getAPIStatus()).toBe({ status: 'success' });
+      expect(appController.getAPIStatus()).toStrictEqual({ status: 'success' });
     });
   });
 });

@@ -1,0 +1,17 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -f Dockerfile.test -t sabbiu/coursestar .
+
+script:
+  - docker run sabbiu/coursestar npm run test
+  - docker run sabbiu/coursestar npm run test --prefix client
+
+deploy:
+  provider: heroku
+  api_key: $HEROKU_API_KEY
+  app:
+    master: $HEROKU_APP
