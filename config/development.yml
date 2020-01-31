@@ -6,3 +6,7 @@ db:
 
 jwt:
   secret: 'topSecret'
+
+google:
+  clientId: 691947114270-bfibkt3dk1a6juruovhntbts9f53obag.apps.googleusercontent.com
+  clientSecret: TeYU0TSY2ySyns88egdinexy

@@ -1,2 +1,5 @@
 jwt:
   expiresIn: 300h
+
+google:
+  callbackURL: /api/auth/google/callback

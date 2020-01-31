@@ -12,12 +12,10 @@ export const UserSchema = new Schema({
     index: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
+  password: String,
   photo: { type: String, default: 'https://i.picsum.photos/id/0/200/200.jpg' },
   salt: String,
+  googleId: String,
 });
 
 UserSchema.methods.validatePassword = async function(password: string) {

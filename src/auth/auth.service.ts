@@ -12,6 +12,7 @@ import { User } from './interfaces/user.interface';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { randomNumber } from '../helpers/randomNumber';
 
 @Injectable()
 export class AuthService {
@@ -49,11 +50,47 @@ export class AuthService {
     }
 
     const payload: JwtPayload = { username };
-    const accessToken = await this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload);
     return { accessToken };
   }
 
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
+  }
+
+  async validateOAuthGoogleLogin(profile: any): Promise<string> {
+    const user = await this.userModel.findOne({ googleId: profile.id });
+    let username: string;
+    if (!user) {
+      const newUser = new this.userModel();
+      newUser.googleId = profile.id;
+      newUser.name = profile._json.name;
+      newUser.username = await this.validateUsername(
+        profile._json.given_name.toLowerCase()
+      );
+      newUser.photo = profile._json.picture;
+
+      await newUser.save();
+      username = newUser.username;
+    } else {
+      username = user.username;
+    }
+
+    const payload: JwtPayload = { username };
+    const accessToken = this.jwtService.sign(payload);
+    return accessToken;
+  }
+
+  async validateUsername(username: string): Promise<string> {
+    let newUsername = username;
+    while (true) {
+      const user = await this.userModel.findOne({ username: newUsername });
+      if (user) {
+        newUsername = `${username}${randomNumber(300)}`;
+      } else {
+        break;
+      }
+    }
+    return newUsername;
   }
 }

@@ -6,6 +6,7 @@ export interface User extends Document {
   password: string;
   salt: string;
   photo: string;
+  googleId: string;
 
   validatePassword(password: string): Promise<boolean>;
 }
