@@ -1,0 +1,8 @@
+server:
+  port: 3000
+
+db:
+  uri: mongodb+srv://admin:2geWAA8RfUzgnPkX@cluster0-uddfx.mongodb.net/coursestar?retryWrites=true&w=majority
+
+jwt:
+  secret: 'topSecret'
