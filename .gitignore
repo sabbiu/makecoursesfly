@@ -35,3 +35,5 @@ lerna-debug.log*
 
 # keys
 keys.dev.ts
+
+notes.txt

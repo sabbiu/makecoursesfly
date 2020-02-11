@@ -12,4 +12,6 @@ export class AuthRegisterDto {
   @MinLength(5)
   @MaxLength(20)
   password: string;
+
+  photo?: string;
 }

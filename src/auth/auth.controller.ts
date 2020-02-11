@@ -11,6 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth-login.dto';
+import { Token } from './interfaces/token.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -19,12 +20,12 @@ export class AuthController {
   @Post('/register')
   register(
     @Body(ValidationPipe) authRegisterDto: AuthRegisterDto
-  ): Promise<void> {
+  ): Promise<Token> {
     return this.authService.register(authRegisterDto);
   }
 
   @Post('/login')
-  login(@Body() authLoginDto: AuthLoginDto): Promise<{ accessToken: string }> {
+  login(@Body() authLoginDto: AuthLoginDto): Promise<Token> {
     return this.authService.login(authLoginDto);
   }
 
@@ -34,7 +35,7 @@ export class AuthController {
 
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
-  googleLoginCallback(@Req() req: { user: { accessToken: string } }) {
+  googleLoginCallback(@Req() req: { user: Token }) {
     const accessToken: string = req.user.accessToken;
     if (accessToken) {
       return `
