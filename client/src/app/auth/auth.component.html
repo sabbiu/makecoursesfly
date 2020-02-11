@@ -5,69 +5,82 @@
       <hr>
       <div class="row">
         <div class="col-xs-12 col-sm-8 offset-sm-2">
-          <button class="btn btn-block google-btn" type="button"> Continue with Google+</button>
+          <a class="btn btn-block google-btn" href="/api/auth/google"> Continue with Google+</a>
         </div>
       </div>
       <p style="text-align:center; margin-top: 15px;"> OR </p>
-      <!-- <div class="alert alert-danger">
-        This is a danger alert—check it out!
-      </div> -->
+
       <div class="form-group" *ngIf="!isLogin">
-        <label for="name">Name</label>
-        <input type="text" class="form-control"
-          [ngClass]="{'is-invalid': name.invalid && (name.dirty || name.touched)  }" id="name"
-          placeholder="Enter Full Name" formControlName="name">
+        <label for="name">Name *</label>
+        <input type="text" class="form-control" [ngClass]="{'is-invalid': fhService.isInvalid(name), 
+        'is-valid': fhService.isValid(name)}" id="name" placeholder="Enter Full Name" formControlName="name">
         <div class="invalid-feedback" *ngIf="name.errors">
-          <span *ngIf="name.errors.required">Name is required. </span>
+          <ng-container *ngIf="name.errors.required">Name is required</ng-container>
         </div>
       </div>
+
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">Username *</label>
         <input type="text" class="form-control"
-          [ngClass]="{'is-invalid': username.invalid && (username.dirty || username.touched)}" id="username"
-          placeholder="Enter Username" formControlName="username">
+          [ngClass]="{'is-invalid': fhService.isInvalid(username), 'is-valid': fhService.isValid(username)}"
+          id="username" placeholder="Enter Username" formControlName="username">
         <div class="invalid-feedback" *ngIf="username.errors">
-          <span *ngIf="username.errors.required">Username is required. </span>
+          <ng-container *ngIf="username.errors.required">Username is required</ng-container>
+          <ng-container *ngIf="!!username.errors.minlength">Username must be greater than 4 characters</ng-container>
+          <ng-container *ngIf="!!username.errors.maxlength">Username cannot be greater than 20 characters</ng-container>
         </div>
       </div>
+
       <div formGroupName="passwords">
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">Password *</label>
           <input type="password" class="form-control"
-            [ngClass]="{'is-invalid': password.invalid && (password.dirty || password.touched)}" id="password"
-            placeholder="Password" formControlName="password">
+            [ngClass]="{'is-invalid': fhService.isInvalid(password), 'is-valid': fhService.isValid(password)}"
+            id="password" placeholder="Password" formControlName="password">
           <div class="invalid-feedback" *ngIf="password.errors">
-            <span *ngIf="password.errors.required">Password is required. </span>
+            <ng-container *ngIf="password.errors.required">Password is required</ng-container>
+            <ng-container *ngIf="!!password.errors.minlength">Password must be greater than 4 characters</ng-container>
+            <ng-container *ngIf="!!password.errors.maxlength">Password cannot be greater than 20 characters
+            </ng-container>
           </div>
         </div>
         <div class="form-group" *ngIf="!isLogin">
-          <label for="password2">Confirm Password</label>
-          <input type="password" class="form-control"
-            [ngClass]="{'is-invalid': password2.invalid && (password2.dirty || password2.touched)}" id="password2"
+          <label for="password2">Confirm Password *</label>
+          <input type="password" class="form-control" [ngClass]="{'is-invalid': (password2.invalid || passwords.errors?.passwordDoesNotMatch) && (password2.dirty || password2.touched),
+            'is-valid': fhService.isValid(password2) && fhService.isValid(passwords)}" id="password2"
             placeholder="Password" formControlName="password2">
-          <div class="invalid-feedback" *ngIf="password2.errors">
-            <span *ngIf="password2.errors.required">Password confirmation is required. </span>
+          <div class="invalid-feedback">
+            <ng-container *ngIf="password2.errors?.required; else password2if1">Password confirmation
+              is required
+            </ng-container>
+            <ng-template #password2if1>
+              <ng-container *ngIf="passwords.errors?.passwordDoesNotMatch">Password does not match
+              </ng-container>
+            </ng-template>
           </div>
         </div>
       </div>
+
       <div class="form-group" *ngIf="!isLogin">
         <label for="photo">Photo URL</label>
         <input type="text" class="form-control" id="photo" placeholder="Enter photo url" formControlName="photo">
       </div>
+
       <div>
-        <button class="btn btn-success" type="submit">{{isLogin ? 'Sign In' : 'Register' }}</button>
+        <button class="btn btn-success" type="submit" [disabled]="form.invalid || loading"> <span
+            class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="loading"></span>
+          {{isLogin ? 'Sign In' : 'Register' }}</button>
       </div>
+
       <div [ngStyle]="{margin: '10px'}"></div>
-      <p *ngIf="isLogin; else register">
+      <ng-container *ngIf="isLogin; else register">
         Don't have an account? <a routerLink="/register">Create new account</a>
-      </p>
+      </ng-container>
       <ng-template #register>
-        <p>
+        <ng-container>
           Have an account? <a routerLink="/sign-in">Go to login</a>
-        </p>
+        </ng-container>
       </ng-template>
-
     </form>
-
   </div>
 </div>

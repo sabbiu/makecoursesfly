@@ -19,6 +19,7 @@ export class AuthenticateSuccess implements Action {
       name: string;
       username: string;
       photo: string;
+      redirect: boolean;
     }
   ) {}
 }
@@ -49,4 +50,5 @@ export type AuthActionTypes =
   | AuthenticateSuccess
   | LoginStart
   | AccessTokenSuccess
-  | RegisterStart;
+  | RegisterStart
+  | AuthenticateFail;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   FormGroup,
@@ -9,20 +9,27 @@ import {
 import * as fromApp from '../core/store/app.reducer';
 import * as AuthActions from './store/auth.actions';
 import { ActivatedRoute } from '@angular/router';
+import { FormHelperService } from '../core/services/form-helper.service';
+import { Subscription } from 'rxjs';
+import { NotificationService } from '../core/services/notification.service';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   form: FormGroup;
   title: string;
   isLogin: boolean;
+  loading: boolean;
+
+  storeSub: Subscription;
 
   constructor(
     private route: ActivatedRoute,
-    private store: Store<fromApp.AppState>
+    private store: Store<fromApp.AppState>,
+    private fhService: FormHelperService
   ) {}
 
   ngOnInit() {
@@ -30,7 +37,11 @@ export class AuthComponent implements OnInit {
       this.isLogin = data[data.length - 1].path !== 'register';
       this.title = this.isLogin ? 'Register' : 'Sign In';
 
-      const username = new FormControl(null, Validators.required);
+      const username = new FormControl(null, [
+        Validators.required,
+        Validators.minLength(5),
+        Validators.maxLength(20),
+      ]);
       if (this.isLogin) {
         this.form = new FormGroup({
           username,
@@ -44,7 +55,11 @@ export class AuthComponent implements OnInit {
           username,
           passwords: new FormGroup(
             {
-              password: new FormControl(null, Validators.required),
+              password: new FormControl(null, [
+                Validators.required,
+                Validators.minLength(5),
+                Validators.maxLength(20),
+              ]),
               password2: new FormControl(null, Validators.required),
             },
             this.passwordMatchValidator
@@ -53,14 +68,34 @@ export class AuthComponent implements OnInit {
         });
       }
     });
+
+    this.storeSub = this.store.select('auth').subscribe(authState => {
+      this.loading = authState.loading;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.storeSub) this.storeSub.unsubscribe();
   }
 
   onSubmit() {
-    console.log(this.form);
+    // console.log(this.form);
     if (this.isLogin) {
-      this.store.dispatch(new AuthActions.LoginStart(this.form.value));
+      this.store.dispatch(
+        new AuthActions.LoginStart({
+          username: this.form.value.username,
+          password: this.form.value.passwords.password,
+        })
+      );
     } else {
-      this.store.dispatch(new AuthActions.RegisterStart(this.form.value));
+      this.store.dispatch(
+        new AuthActions.RegisterStart({
+          username: this.form.value.username,
+          password: this.form.value.passwords.password,
+          name: this.form.value.name,
+          photo: this.form.value.photo,
+        })
+      );
     }
   }
 
@@ -80,6 +115,9 @@ export class AuthComponent implements OnInit {
   }
   get password() {
     return this.form.get('passwords.password');
+  }
+  get passwords() {
+    return this.form.get('passwords');
   }
   get password2() {
     return this.form.get('passwords.password2');

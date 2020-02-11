@@ -8,6 +8,7 @@ import * as fromApp from './store/app.reducer';
 import { AppEffects } from './store/app.effects';
 import { HttpTokenInterceptor } from './interceptors/http-token.interceptor';
 import { NotificationService } from './services/notification.service';
+import { FormHelperService } from './services/form-helper.service';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import { NotificationService } from './services/notification.service';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpTokenInterceptor, multi: true },
     NotificationService,
+    FormHelperService,
   ],
 })
 export class CoreModule {}

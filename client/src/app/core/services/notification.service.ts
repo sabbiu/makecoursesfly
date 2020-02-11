@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 
 const toastrOptions = {
   tapToDismiss: true,
-  positionClass: 'toast-top-center',
+  positionClass: 'toast-top-right',
+  easeTime: 500,
 };
 
 @Injectable()
