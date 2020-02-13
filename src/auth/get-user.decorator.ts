@@ -1,8 +1,8 @@
 import { createParamDecorator } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { UserDoc } from './interfaces/user-document.interface';
 
 export const GetUser = createParamDecorator(
-  (_data, req): User => {
+  (_data, req): UserDoc => {
     return req.user;
   }
 );

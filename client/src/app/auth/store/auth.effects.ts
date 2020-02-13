@@ -113,7 +113,12 @@ export class AuthEffects {
       errorMessage = 'Incorrect username of password';
       // return of(new AuthActions.AuthenticateFail(errorMessage));
     }
-    if (errorRes.error && errorRes.error.message) {
+    if (
+      errorRes.error &&
+      errorRes.error.message &&
+      errorRes.error.statusCode &&
+      errorRes.error.statusCode === 409
+    ) {
       const errorArray = errorRes.error.message
         .filter((errorItem: any) => errorItem.constraints.duplicate)
         .map((errorItem: any) => errorItem.constraints.duplicate);

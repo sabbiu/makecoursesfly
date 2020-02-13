@@ -8,35 +8,33 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { MONGO_ERROR_CODE } from 'config/error-codes.constant';
-import { User } from './interfaces/user.interface';
+import { randomNumber } from '../helpers/randomNumber';
+import { UserDoc } from './interfaces/user-document.interface';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { randomNumber } from '../helpers/randomNumber';
 import { Token } from './interfaces/token.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel('User')
-    private readonly userModel: Model<User>,
+    private readonly userModel: Model<UserDoc>,
     private readonly jwtService: JwtService
   ) {}
 
   async register(authRegisterDto: AuthRegisterDto): Promise<Token> {
     const { name, username, password, photo, email } = authRegisterDto;
 
-    const user = new this.userModel();
+    const user: any = {};
     user.name = name;
     user.username = username;
     user.email = email;
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
     if (photo) user.photo = photo;
-
     try {
-      await user.save();
+      await this.userModel.create(user);
     } catch (error) {
       this.handleRegistrationError(error);
     }
@@ -48,7 +46,7 @@ export class AuthService {
     const { username, password } = authLoginDto;
     const user = await this.userModel.findOne({ username });
 
-    if (!(user && (await user.validatePassword(password)))) {
+    if (!(user && user.password && (await user.validatePassword(password)))) {
       throw new UnauthorizedException();
     }
 
@@ -59,7 +57,7 @@ export class AuthService {
     const user = await this.userModel.findOne({ googleId: profile.id });
     let username: string;
     if (!user) {
-      const newUser = new this.userModel();
+      const newUser: any = {};
       newUser.googleId = profile.id;
       newUser.name = profile._json.name;
       newUser.username = await this.validateUsername(
@@ -69,7 +67,7 @@ export class AuthService {
       newUser.photo = profile._json.picture;
 
       try {
-        await newUser.save();
+        await this.userModel.create(newUser);
       } catch (error) {
         this.handleRegistrationError(error);
       }

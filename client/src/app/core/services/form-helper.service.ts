@@ -1,11 +1,11 @@
-import { FormControl } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 
 export class FormHelperService {
-  isValid(property: FormControl) {
+  isValid(property: AbstractControl) {
     return property.valid && (property.dirty || property.touched);
   }
 
-  isInvalid(property: FormControl) {
+  isInvalid(property: AbstractControl) {
     return property.invalid && (property.dirty || property.touched);
   }
 }

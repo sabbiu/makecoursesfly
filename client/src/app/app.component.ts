@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import * as fromApp from './core/store/app.reducer';
 import * as AuthActions from './auth/store/auth.actions';
+import * as fromAuth from './auth/store/auth.reducer';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +12,7 @@ import * as AuthActions from './auth/store/auth.actions';
 })
 export class AppComponent implements OnInit {
   // storeSub: Subscription;
-  authState: any;
+  authState: Observable<fromAuth.AuthState>;
 
   constructor(private store: Store<fromApp.AppState>) {}
 
