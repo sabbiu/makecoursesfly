@@ -5,6 +5,9 @@ export const ACCESS_TOKEN = '[Auth] Access Token';
 export const AUTHENTICATE_SUCCESS = '[Auth] Login';
 export const REGISTER_START = '[Auth] Register Start';
 export const AUTHENTICATE_FAIL = '[Auth] Auth Failed';
+export const LOGOUT = '[Auth] Logout';
+export const AUTO_LOGIN = '[Auth] Auto Login';
+export const AUTO_LOGIN_NO_USER = '[Auth] Auto Login No User';
 
 export class AccessTokenSuccess implements Action {
   readonly type = ACCESS_TOKEN;
@@ -17,9 +20,9 @@ export class AuthenticateSuccess implements Action {
     public payload: {
       id: string;
       name: string;
+      email: string;
       username: string;
       photo: string;
-      redirect: boolean;
     }
   ) {}
 }
@@ -34,6 +37,7 @@ export class RegisterStart implements Action {
   constructor(
     public payload: {
       name: string;
+      email: string;
       username: string;
       password: string;
       photo: string;
@@ -46,9 +50,24 @@ export class AuthenticateFail implements Action {
   constructor(public payload: string) {}
 }
 
+export class Logout implements Action {
+  readonly type = LOGOUT;
+}
+
+export class AutoLogin implements Action {
+  readonly type = AUTO_LOGIN;
+}
+
+export class AutoLoginNoUser implements Action {
+  readonly type = AUTO_LOGIN_NO_USER;
+}
+
 export type AuthActionTypes =
   | AuthenticateSuccess
   | LoginStart
   | AccessTokenSuccess
   | RegisterStart
-  | AuthenticateFail;
+  | AuthenticateFail
+  | Logout
+  | AutoLogin
+  | AutoLoginNoUser;

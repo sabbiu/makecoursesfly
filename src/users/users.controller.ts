@@ -9,7 +9,7 @@ export class UsersController {
   @Get('/me')
   @UseGuards(AuthGuard())
   me(@GetUser() user: User): UserProfile {
-    const { _id, username, name, photo } = user;
-    return { id: _id, username, name, photo };
+    const { _id, username, name, photo, email } = user;
+    return { id: _id, username, name, photo, email };
   }
 }

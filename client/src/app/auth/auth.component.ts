@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   FormGroup,
@@ -6,30 +7,29 @@ import {
   Validators,
   AbstractControl,
 } from '@angular/forms';
+import { Observable } from 'rxjs';
 import * as fromApp from '../core/store/app.reducer';
-import * as AuthActions from './store/auth.actions';
-import { ActivatedRoute } from '@angular/router';
 import { FormHelperService } from '../core/services/form-helper.service';
-import { Subscription } from 'rxjs';
-import { NotificationService } from '../core/services/notification.service';
+import * as fromAuth from './store/auth.reducer';
+import * as AuthActions from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit {
   form: FormGroup;
   title: string;
   isLogin: boolean;
   loading: boolean;
 
-  storeSub: Subscription;
+  authState: Observable<fromAuth.AuthState>;
 
   constructor(
     private route: ActivatedRoute,
     private store: Store<fromApp.AppState>,
-    private fhService: FormHelperService
+    private fhService: FormHelperService // used in template
   ) {}
 
   ngOnInit() {
@@ -53,6 +53,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.form = new FormGroup({
           name: new FormControl(null, Validators.required),
           username,
+          email: new FormControl(null, [Validators.required, Validators.email]),
           passwords: new FormGroup(
             {
               password: new FormControl(null, [
@@ -69,13 +70,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.storeSub = this.store.select('auth').subscribe(authState => {
-      this.loading = authState.loading;
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.storeSub) this.storeSub.unsubscribe();
+    this.authState = this.store.select('auth');
   }
 
   onSubmit() {
@@ -91,6 +86,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.store.dispatch(
         new AuthActions.RegisterStart({
           username: this.form.value.username,
+          email: this.form.value.email,
           password: this.form.value.passwords.password,
           name: this.form.value.name,
           photo: this.form.value.photo,
@@ -112,6 +108,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
   get username() {
     return this.form.get('username');
+  }
+  get email() {
+    return this.form.get('email');
   }
   get password() {
     return this.form.get('passwords.password');

@@ -1,4 +1,4 @@
-import { IsString, MinLength, MaxLength } from 'class-validator';
+import { IsString, MinLength, MaxLength, IsEmail } from 'class-validator';
 
 export class AuthRegisterDto {
   name: string;
@@ -12,6 +12,9 @@ export class AuthRegisterDto {
   @MinLength(5)
   @MaxLength(20)
   password: string;
+
+  @IsEmail()
+  email: string;
 
   photo?: string;
 }

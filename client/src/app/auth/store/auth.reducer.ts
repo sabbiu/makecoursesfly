@@ -22,6 +22,7 @@ export function authReducer(
   switch (action.type) {
     case AuthActions.LOGIN_START:
     case AuthActions.REGISTER_START:
+    case AuthActions.AUTO_LOGIN:
       return { ...state, error: null, loading: true };
 
     case AuthActions.ACCESS_TOKEN:
@@ -33,6 +34,7 @@ export function authReducer(
         user: new User(
           action.payload.id,
           action.payload.name,
+          action.payload.email,
           action.payload.username,
           action.payload.photo
         ),
@@ -42,6 +44,10 @@ export function authReducer(
 
     case AuthActions.AUTHENTICATE_FAIL:
       return { ...state, error: action.payload, loading: false };
+
+    case AuthActions.LOGOUT:
+    case AuthActions.AUTO_LOGIN_NO_USER:
+      return { ...initialState };
 
     default:
       return state;

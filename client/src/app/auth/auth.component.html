@@ -31,6 +31,17 @@
         </div>
       </div>
 
+      <div class="form-group" *ngIf="!isLogin">
+        <label for="email">Email *</label>
+        <input type="email" class="form-control"
+          [ngClass]="{'is-invalid': fhService.isInvalid(email), 'is-valid': fhService.isValid(email)}" id="email"
+          placeholder="Enter Email" formControlName="email">
+        <div class="invalid-feedback" *ngIf="email.errors">
+          <ng-container *ngIf="email.errors.required">Email is required</ng-container>
+          <ng-container *ngIf="email.errors.email">Email is not in correct format</ng-container>
+        </div>
+      </div>
+
       <div formGroupName="passwords">
         <div class="form-group">
           <label for="password">Password *</label>
@@ -67,8 +78,8 @@
       </div>
 
       <div>
-        <button class="btn btn-success" type="submit" [disabled]="form.invalid || loading"> <span
-            class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="loading"></span>
+        <button class="btn btn-success" type="submit" [disabled]="form.invalid || (authState | async).loading"> <span
+            class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="(authState | async).loading"></span>
           {{isLogin ? 'Sign In' : 'Register' }}</button>
       </div>
 

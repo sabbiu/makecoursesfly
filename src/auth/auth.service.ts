@@ -25,11 +25,12 @@ export class AuthService {
   ) {}
 
   async register(authRegisterDto: AuthRegisterDto): Promise<Token> {
-    const { name, username, password, photo } = authRegisterDto;
+    const { name, username, password, photo, email } = authRegisterDto;
 
     const user = new this.userModel();
     user.name = name;
     user.username = username;
+    user.email = email;
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
     if (photo) user.photo = photo;
@@ -37,17 +38,7 @@ export class AuthService {
     try {
       await user.save();
     } catch (error) {
-      if (error.code === MONGO_ERROR_CODE.DUPLICATE) {
-        throw new ConflictException([
-          {
-            property: 'username',
-            constraints: {
-              duplicate: 'Username already exists',
-            },
-          },
-        ]);
-      }
-      throw new InternalServerErrorException();
+      this.handleRegistrationError(error);
     }
 
     return this.generateToken({ username });
@@ -74,15 +65,40 @@ export class AuthService {
       newUser.username = await this.validateUsername(
         profile._json.given_name.toLowerCase()
       );
+      newUser.email = profile._json.email;
       newUser.photo = profile._json.picture;
 
-      await newUser.save();
+      try {
+        await newUser.save();
+      } catch (error) {
+        this.handleRegistrationError(error);
+      }
       username = newUser.username;
     } else {
       username = user.username;
     }
 
     return this.generateToken({ username }).accessToken;
+  }
+
+  private handleRegistrationError(error: any) {
+    const errorMessages = [];
+    if (error && error.errors) {
+      if (error.name === 'ValidationError') {
+        for (let property in error.errors) {
+          if (error.errors.hasOwnProperty(property)) {
+            errorMessages.push({
+              property,
+              constraints: {
+                duplicate: error.errors[property].properties.message,
+              },
+            });
+          }
+        }
+        throw new ConflictException(errorMessages);
+      }
+    }
+    throw new InternalServerErrorException();
   }
 
   private async validateUsername(username: string): Promise<string> {
