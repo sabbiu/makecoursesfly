@@ -1,0 +1,2 @@
+google:
+  callbackURL: https://limitless-waters-51762.herokuapp.com/api/auth/google/callback
