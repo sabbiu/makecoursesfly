@@ -29,7 +29,7 @@ export class AuthComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private store: Store<fromApp.AppState>,
-    public fhService: FormHelperService // used in template
+    public fhService: FormHelperService
   ) {}
 
   ngOnInit() {

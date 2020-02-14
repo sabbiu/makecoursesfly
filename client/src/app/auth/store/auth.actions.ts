@@ -14,35 +14,37 @@ export class AccessTokenSuccess implements Action {
   constructor(public payload: string) {}
 }
 
+export interface AuthenticateSuccessPayload {
+  id: string;
+  name: string;
+  email: string;
+  username: string;
+  photo: string;
+}
 export class AuthenticateSuccess implements Action {
   readonly type = AUTHENTICATE_SUCCESS;
-  constructor(
-    public payload: {
-      id: string;
-      name: string;
-      email: string;
-      username: string;
-      photo: string;
-    }
-  ) {}
+  constructor(public payload: AuthenticateSuccessPayload) {}
 }
 
+export interface LoginStartPayload {
+  username: string;
+  password: string;
+}
 export class LoginStart implements Action {
   readonly type = LOGIN_START;
-  constructor(public payload: { username: string; password: string }) {}
+  constructor(public payload: LoginStartPayload) {}
 }
 
+export interface RegisterStartPayload {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  photo: string;
+}
 export class RegisterStart implements Action {
   readonly type = REGISTER_START;
-  constructor(
-    public payload: {
-      name: string;
-      email: string;
-      username: string;
-      password: string;
-      photo: string;
-    }
-  ) {}
+  constructor(public payload: RegisterStartPayload) {}
 }
 
 export class AuthenticateFail implements Action {
