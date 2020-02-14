@@ -1,60 +1,48 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Effect, Actions, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { of, Observable, EMPTY } from 'rxjs';
 import { switchMap, tap, map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../core/services/notification.service';
 import * as AuthActions from './auth.actions';
-
-export interface AuthResponseData {
-  _id: string;
-  name: string;
-  username: string;
-  email: string;
-  photo: string;
-}
+import { Action } from '@ngrx/store';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthEffects {
   @Effect()
-  authLogin = this.action$.pipe(
-    ofType(AuthActions.LOGIN_START),
-    switchMap((authData: AuthActions.LoginStart) => {
-      return this.http
-        .post<{ accessToken: string }>('/api/auth/login', authData.payload)
-        .pipe(
-          map(tokenData => {
-            return new AuthActions.AccessTokenSuccess(tokenData.accessToken);
-          }),
-          catchError(this.handleError)
-        );
-    })
+  authLogin$: Observable<Action | Array<Action>> = this.action$.pipe(
+    ofType<AuthActions.LoginStart>(AuthActions.LOGIN_START),
+    switchMap(action =>
+      this.authService.login(action.payload).pipe(
+        map(
+          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+        ),
+        catchError(this.handleError)
+      )
+    )
   );
 
   @Effect()
-  register = this.action$.pipe(
+  register$: Observable<Action | Array<Action>> = this.action$.pipe(
     ofType(AuthActions.REGISTER_START),
-    switchMap((authData: AuthActions.RegisterStart) => {
-      return this.http
-        .post<{ accessToken: string }>('/api/auth/register', authData.payload)
-        .pipe(
-          map(
-            tokenData =>
-              new AuthActions.AccessTokenSuccess(tokenData.accessToken)
-          ),
-          catchError(this.handleError)
-        );
-    })
+    switchMap((action: AuthActions.RegisterStart) =>
+      this.authService.register(action.payload).pipe(
+        map(
+          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+        ),
+        catchError(this.handleError)
+      )
+    )
   );
 
   @Effect()
-  fetchMe = this.action$.pipe(
+  fetchMe$ = this.action$.pipe(
     ofType(AuthActions.ACCESS_TOKEN),
-    switchMap((authTokenAction: AuthActions.AccessTokenSuccess) => {
-      return this.http.get<AuthResponseData>('/api/users/me').pipe(
+    switchMap((action: AuthActions.AccessTokenSuccess) =>
+      this.authService.fetchMe().pipe(
         map(resData => {
-          localStorage.setItem('accessToken', authTokenAction.payload);
+          localStorage.setItem('accessToken', action.payload);
           return new AuthActions.AuthenticateSuccess({
             id: resData._id,
             username: resData.username,
@@ -68,14 +56,14 @@ export class AuthEffects {
             return of(new AuthActions.Logout());
           }
           console.log(errorRes);
-          return of();
+          return EMPTY;
         })
-      );
-    })
+      )
+    )
   );
 
   @Effect({ dispatch: false })
-  authRedirect = this.action$.pipe(
+  authRedirect$ = this.action$.pipe(
     ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
     tap(() => {
       this.router.navigate(['/']);
@@ -83,7 +71,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  autoLogin = this.action$.pipe(
+  autoLogin$ = this.action$.pipe(
     ofType(AuthActions.AUTO_LOGIN),
     map(() => {
       const accessToken = localStorage.getItem('accessToken');
@@ -95,14 +83,14 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
-  authLogout = this.action$.pipe(
+  authLogout$ = this.action$.pipe(
     ofType(AuthActions.LOGOUT),
     tap(() => {
       localStorage.removeItem('accessToken');
     })
   );
 
-  private handleError(errorRes: any) {
+  private handleError(errorRes: any): Observable<Action | Array<Action>> {
     console.log(errorRes);
     let errorMessage = 'An unknown error occurred!';
     if (
@@ -135,9 +123,9 @@ export class AuthEffects {
 
   constructor(
     private action$: Actions,
-    private http: HttpClient,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {
     this.handleError = this.handleError.bind(this);
   }

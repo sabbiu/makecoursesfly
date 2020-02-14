@@ -15,7 +15,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main",
     "start:client": "npm run start --prefix client",
     "dev": "concurrently \"npm run start:dev\" \"npm run start:client\"",
     "lint": "eslint '{src,apps,libs,test}/**/*.ts' --fix",

@@ -18,6 +18,11 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 # This way we don't need rebuilding node-sass each time!
 ENV SASS_BINARY_NAME=linux-x64-67
 
+RUN npm install --global node-gyp
+RUN apk add python
+RUN apk add make
+RUN apk add g++
+
 WORKDIR /app
 
 COPY ./package.json ./
