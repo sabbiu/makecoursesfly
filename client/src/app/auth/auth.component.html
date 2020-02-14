@@ -1,0 +1,97 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-8 offset-sm-2 col-lg-6 offset-lg-3">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <h2 style="margin-top: 50px;">{{isLogin ? 'Sign In' : 'Register'}}</h2>
+      <hr>
+      <div class="row">
+        <div class="col-xs-12 col-sm-8 offset-sm-2">
+          <a class="btn btn-block google-btn" href="/api/auth/google"> Continue with Google+</a>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top: 15px;"> OR </p>
+
+      <div class="form-group" *ngIf="!isLogin">
+        <label for="name">Name *</label>
+        <input type="text" class="form-control" [ngClass]="{'is-invalid': fhService.isInvalid(name), 
+        'is-valid': fhService.isValid(name)}" id="name" placeholder="Enter Full Name" formControlName="name">
+        <div class="invalid-feedback" *ngIf="name.errors">
+          <ng-container *ngIf="name.errors.required">Name is required</ng-container>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username *</label>
+        <input type="text" class="form-control"
+          [ngClass]="{'is-invalid': fhService.isInvalid(username), 'is-valid': fhService.isValid(username)}"
+          id="username" placeholder="Enter Username" formControlName="username">
+        <div class="invalid-feedback" *ngIf="username.errors">
+          <ng-container *ngIf="username.errors.required">Username is required</ng-container>
+          <ng-container *ngIf="!!username.errors.minlength">Username must be greater than 4 characters</ng-container>
+          <ng-container *ngIf="!!username.errors.maxlength">Username cannot be greater than 20 characters</ng-container>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="!isLogin">
+        <label for="email">Email *</label>
+        <input type="email" class="form-control"
+          [ngClass]="{'is-invalid': fhService.isInvalid(email), 'is-valid': fhService.isValid(email)}" id="email"
+          placeholder="Enter Email" formControlName="email">
+        <div class="invalid-feedback" *ngIf="email.errors">
+          <ng-container *ngIf="email.errors.required">Email is required</ng-container>
+          <ng-container *ngIf="email.errors.email">Email is not in correct format</ng-container>
+        </div>
+      </div>
+
+      <div formGroupName="passwords">
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input type="password" class="form-control"
+            [ngClass]="{'is-invalid': fhService.isInvalid(password), 'is-valid': fhService.isValid(password)}"
+            id="password" placeholder="Password" formControlName="password">
+          <div class="invalid-feedback" *ngIf="password.errors">
+            <ng-container *ngIf="password.errors.required">Password is required</ng-container>
+            <ng-container *ngIf="!!password.errors.minlength">Password must be greater than 4 characters</ng-container>
+            <ng-container *ngIf="!!password.errors.maxlength">Password cannot be greater than 20 characters
+            </ng-container>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="!isLogin">
+          <label for="password2">Confirm Password *</label>
+          <input type="password" class="form-control" [ngClass]="{'is-invalid': (password2.invalid || passwords.errors?.passwordDoesNotMatch) && (password2.dirty || password2.touched),
+            'is-valid': fhService.isValid(password2) && fhService.isValid(passwords)}" id="password2"
+            placeholder="Password" formControlName="password2">
+          <div class="invalid-feedback">
+            <ng-container *ngIf="password2.errors?.required; else password2if1">Password confirmation
+              is required
+            </ng-container>
+            <ng-template #password2if1>
+              <ng-container *ngIf="passwords.errors?.passwordDoesNotMatch">Password does not match
+              </ng-container>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="!isLogin">
+        <label for="photo">Photo URL</label>
+        <input type="text" class="form-control" id="photo" placeholder="Enter photo url" formControlName="photo">
+      </div>
+
+      <div>
+        <button class="btn btn-success" type="submit" [disabled]="form.invalid || (authState | async).loading"> <span
+            class="spinner-border spinner-border-sm" aria-hidden="true" *ngIf="(authState | async).loading"></span>
+          {{isLogin ? 'Sign In' : 'Register' }}</button>
+      </div>
+
+      <div [ngStyle]="{margin: '10px'}"></div>
+      <ng-container *ngIf="isLogin; else register">
+        Don't have an account? <a routerLink="/register">Create new account</a>
+      </ng-container>
+      <ng-template #register>
+        <ng-container>
+          Have an account? <a routerLink="/sign-in">Go to login</a>
+        </ng-container>
+      </ng-template>
+    </form>
+  </div>
+</div>
