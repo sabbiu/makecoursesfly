@@ -5,8 +5,8 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import * as fromApp from '../store/app.reducer';
 
 @Injectable()
