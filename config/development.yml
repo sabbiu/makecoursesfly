@@ -1,0 +1,12 @@
+server:
+  port: 3000
+
+db:
+  uri: mongodb+srv://admin:2geWAA8RfUzgnPkX@cluster0-uddfx.mongodb.net/coursestar?retryWrites=true&w=majority
+
+jwt:
+  secret: 'topSecret'
+
+google:
+  clientId: 691947114270-bfibkt3dk1a6juruovhntbts9f53obag.apps.googleusercontent.com
+  clientSecret: TeYU0TSY2ySyns88egdinexy
