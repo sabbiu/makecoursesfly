@@ -39,6 +39,7 @@
     "concurrently": "^5.1.0",
     "config": "^3.2.5",
     "dotenv": "^8.2.0",
+    "is-reachable": "^4.0.0",
     "mongoose": "^5.8.10",
     "mongoose-unique-validator": "^2.0.3",
     "passport": "^0.4.1",
