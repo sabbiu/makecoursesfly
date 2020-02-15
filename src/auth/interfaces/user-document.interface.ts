@@ -8,6 +8,8 @@ export interface UserDoc extends Document {
   salt: string;
   photo: string;
   googleId: string;
+  createdAt: Date;
+  updatedAt: Date;
 
   validatePassword(password: string): Promise<boolean>;
 }
