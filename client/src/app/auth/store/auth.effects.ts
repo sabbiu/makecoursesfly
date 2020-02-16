@@ -16,7 +16,10 @@ export class AuthEffects {
     switchMap(action =>
       this.authService.login(action.payload).pipe(
         map(
-          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+          tokenData =>
+            new AuthActions.AccessTokenSuccess({
+              accessToken: tokenData.accessToken,
+            })
         ),
         catchError(this.handleError)
       )
@@ -29,7 +32,10 @@ export class AuthEffects {
     switchMap((action: AuthActions.RegisterStart) =>
       this.authService.register(action.payload).pipe(
         map(
-          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+          tokenData =>
+            new AuthActions.AccessTokenSuccess({
+              accessToken: tokenData.accessToken,
+            })
         ),
         catchError(this.handleError)
       )
@@ -42,13 +48,14 @@ export class AuthEffects {
     switchMap((action: AuthActions.AccessTokenSuccess) =>
       this.authService.fetchMe().pipe(
         map(resData => {
-          localStorage.setItem('accessToken', action.payload);
+          localStorage.setItem('accessToken', action.payload.accessToken);
           return new AuthActions.AuthenticateSuccess({
             id: resData._id,
             username: resData.username,
             email: resData.email,
             name: resData.name,
             photo: resData.photo,
+            redirect: action.payload.redirect,
           });
         }),
         catchError((errorRes: any) => {
@@ -65,8 +72,14 @@ export class AuthEffects {
   @Effect({ dispatch: false })
   authRedirect$ = this.action$.pipe(
     ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
-    tap(() => {
-      this.router.navigate(['/']);
+    tap((actionData: AuthActions.AuthenticateSuccess | AuthActions.Logout) => {
+      if (
+        actionData.type === AuthActions.LOGOUT ||
+        (actionData.type === AuthActions.AUTHENTICATE_SUCCESS &&
+          actionData.payload.redirect)
+      ) {
+        this.router.navigate(['/']);
+      }
     })
   );
 
@@ -76,7 +89,10 @@ export class AuthEffects {
     map(() => {
       const accessToken = localStorage.getItem('accessToken');
       if (accessToken) {
-        return new AuthActions.AccessTokenSuccess(accessToken);
+        return new AuthActions.AccessTokenSuccess({
+          accessToken,
+          redirect: false,
+        });
       }
       return new AuthActions.AutoLoginNoUser();
     })
