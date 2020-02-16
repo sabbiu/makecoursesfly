@@ -4,9 +4,10 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { AuthModule } from './auth/auth.module';
-import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
+import { CoreModule } from './core/core.module';
+import { AuthModule } from './auth/auth.module';
+import { PostsModule } from './posts/posts.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +18,7 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     CoreModule,
     AuthModule,
+    PostsModule,
   ],
   bootstrap: [AppComponent],
 })

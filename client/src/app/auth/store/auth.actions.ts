@@ -11,7 +11,11 @@ export const AUTO_LOGIN_NO_USER = '[Auth] Auto Login No User';
 
 export class AccessTokenSuccess implements Action {
   readonly type = ACCESS_TOKEN;
-  constructor(public payload: string) {}
+  constructor(public payload: { accessToken: string; redirect?: boolean }) {
+    if (typeof this.payload.redirect === 'undefined') {
+      this.payload.redirect = true;
+    }
+  }
 }
 
 export interface AuthenticateSuccessPayload {
@@ -20,6 +24,7 @@ export interface AuthenticateSuccessPayload {
   email: string;
   username: string;
   photo: string;
+  redirect: boolean;
 }
 export class AuthenticateSuccess implements Action {
   readonly type = AUTHENTICATE_SUCCESS;
