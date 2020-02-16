@@ -7,5 +7,6 @@ import { CommonModule } from '@angular/common';
 @NgModule({
   declarations: [AuthComponent],
   imports: [CommonModule, ReactiveFormsModule, AuthRoutingModule],
+  exports: [AuthRoutingModule],
 })
 export class AuthModule {}
