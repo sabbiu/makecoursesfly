@@ -1,0 +1,21 @@
+<nav class="navbar fixed-top navbar-expand-sm navbar-light bg-light">
+  <div class="hamburger" (click)="toggleSidebar()" [ngClass]="{'active' : !getSideBarState()}">
+    <div class=" bar1"></div>
+    <div class="bar2"></div>
+    <div class="bar3"></div>
+  </div>
+
+  <a class="navbar-brand" (click)="toggleSidebar()" [ngStyle]="{cursor: 'pointer'}">Amazing Courses</a>
+
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item" routerLinkActive="active" *ngIf="!(authState | async).loading && !(authState | async).user">
+      <a routerLink='/sign-in' class="nav-link">Sign In</a>
+    </li>
+    <li class="nav-item" routerLinkActive="active" *ngIf="!(authState | async).loading && !(authState | async).user">
+      <a routerLink='/register' class="nav-link">Register</a>
+    </li>
+    <li class="nav-item" routerLinkActive="active" *ngIf="!(authState | async).loading && (authState | async).user">
+      <a [ngStyle]="{cursor: 'pointer'}" class="nav-link" (click)="onLogout()">Logout</a>
+    </li>
+  </ul>
+</nav>

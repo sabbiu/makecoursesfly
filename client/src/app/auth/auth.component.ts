@@ -16,7 +16,7 @@ import * as AuthActions from './store/auth.actions';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.css'],
+  styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent implements OnInit {
   form: FormGroup;
