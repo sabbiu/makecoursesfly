@@ -1,0 +1,12 @@
+<div class="d-flex w-100 justify-content-between">
+  <h5 class="mb-1">{{post.title}}</h5>
+
+  <small>{{post.createdAt | date}}</small>
+</div>
+<p class="mb-1">
+  <span *ngFor="let tag of post.tags">
+    <span class="badge badge-light"><a [routerLink]="['/tags', tag._id]" data-item="link">{{tag.title}}</a></span>&nbsp;
+  </span>
+</p>
+<small><a class="out-link" [href]="post.url | addHttp" target="_blank" data-item="link"><i
+      class="fa fa-link"></i>&nbsp;&nbsp;{{post.url}}</a></small>

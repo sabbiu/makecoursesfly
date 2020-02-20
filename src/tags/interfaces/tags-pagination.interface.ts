@@ -1,6 +1,6 @@
 import { Pagination } from '../../interfaces/pagination.interface';
-import { TagDoc } from './tag-document.interfact';
+import { Tag } from './tag.interface';
 
 export interface TagsPagination extends Pagination {
-  data: TagDoc[];
+  data: Tag[];
 }

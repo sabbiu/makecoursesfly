@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BsDropdownModule } from 'ngx-bootstrap';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import {
   PerfectScrollbarModule,
   PerfectScrollbarConfigInterface,
@@ -11,18 +12,31 @@ import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ModalComponent } from './modal/modal.component';
+import { ModalFooterComponent } from './modal/modal-footer.component';
+import { LinkPreviewComponent } from './link-preview/link-preview.component';
+import { AddHttpPipe } from '../pipes/add-http.pipe';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
 };
 
 @NgModule({
-  declarations: [LayoutComponent, SidebarComponent, HeaderComponent],
+  declarations: [
+    LayoutComponent,
+    SidebarComponent,
+    HeaderComponent,
+    ModalComponent,
+    ModalFooterComponent,
+    LinkPreviewComponent,
+    AddHttpPipe,
+  ],
   imports: [
     CommonModule,
     AppRoutingModule,
     BsDropdownModule.forRoot(),
     PerfectScrollbarModule,
+    ModalModule.forRoot(),
   ],
   providers: [
     {
@@ -30,6 +44,12 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
       useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
     },
   ],
-  exports: [LayoutComponent],
+  exports: [
+    LayoutComponent,
+    ModalComponent,
+    ModalFooterComponent,
+    LinkPreviewComponent,
+    AddHttpPipe,
+  ],
 })
 export class SharedModule {}

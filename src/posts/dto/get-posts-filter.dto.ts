@@ -1,4 +1,10 @@
-import { IsOptional, IsNotEmpty, IsNumber, IsIn } from 'class-validator';
+import {
+  IsOptional,
+  IsNotEmpty,
+  IsNumber,
+  IsIn,
+  IsString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetPostsFilterDto {
@@ -24,4 +30,11 @@ export class GetPostsFilterDto {
   @Transform(Number)
   @IsIn([-1, 1]) // -1 for desc and 1 for asc
   order: number = -1;
+
+  @IsOptional()
+  @Transform((value: string | string[]) => {
+    return typeof value === 'string' ? [value] : value;
+  })
+  @IsString({ each: true })
+  tags: string[];
 }

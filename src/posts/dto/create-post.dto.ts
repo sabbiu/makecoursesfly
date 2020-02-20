@@ -25,7 +25,7 @@ export class CreatePostDto {
   tagsNew: string[];
 
   @Transform((value: string | string[]) => {
-    console.log('tagsOld', value);
+    // console.log('tagsOld', value);
     return typeof value === 'string' ? [value] : value;
   })
   @IsString({ each: true })

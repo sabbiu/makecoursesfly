@@ -1,0 +1,21 @@
+<div class="analytics mb-2" *ngIf="!loading">
+  <h3>
+    {{tagsCount}}
+  </h3><strong>{{'total tags' | uppercase}}</strong>
+</div>
+
+<div class="list-group" infinite-scroll [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle"
+  (scrolled)="onScrollEnd()">
+  <a *ngFor="let tag of tags" [routerLink]="['/tags', tag._id]" routerLinkActive="router-link-active"
+    class="list-group-item list-group-item-action">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1">{{tag.title}}</h5>
+      <small>{{tag.createdAt | date}}</small>
+    </div>
+    <small class="mb-1">{{tag.postsCount}} Posts</small>
+  </a>
+</div>
+<div class="d-flex justify-content-center" *ngIf="loading">
+  <span class="spinner-border"></span>
+</div>
+<div class="d-flex justify-content-center py-3" *ngIf="tagsEnd">No more data</div>

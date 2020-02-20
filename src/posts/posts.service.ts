@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -11,6 +12,8 @@ import { PostDoc } from './interfaces/post-document.interface';
 import { PostsPagination } from './interfaces/posts-pagination.interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
+import { Post } from './interfaces/post.interface';
+import { getUrlMetadataHelper } from '../helpers/getUrlMetadata.helper';
 
 @Injectable()
 export class PostsService {
@@ -22,11 +25,12 @@ export class PostsService {
   ) {}
 
   async getPosts(filterDto: GetPostsFilterDto): Promise<PostsPagination> {
-    const { search, limit, offset, sortby, order } = filterDto;
+    const { search, limit, offset, sortby, order, tags } = filterDto;
 
     const query = {} as any;
 
     if (search) query.$text = { $search: search };
+    if (tags && tags.length) query.tags = { $in: tags };
 
     const data = await this.postModel
       .find(query)
@@ -38,10 +42,18 @@ export class PostsService {
     return { data, offset, limit, count };
   }
 
+  async getPost(id: string): Promise<PostDoc> {
+    try {
+      return await this.postModel.findById(id).populate('tags', '_id title');
+    } catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
   async createPost(
     createPostDto: CreatePostDto,
     user: UserDoc
-  ): Promise<PostDoc> {
+  ): Promise<string> {
     const { title, url, tagsNew, tagsOld } = createPostDto;
     const { _id } = user;
 
@@ -78,7 +90,8 @@ export class PostsService {
         createdBy: _id,
       });
 
-      return await post.populate('tags', 'title').execPopulate();
+      // return await post.populate('tags', 'title').execPopulate();
+      return post._id;
     } catch (error) {
       console.log(error);
       this.handleError(error);

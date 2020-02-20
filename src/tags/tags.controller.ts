@@ -6,6 +6,7 @@ import {
   ValidationPipe,
   UseGuards,
   Query,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
@@ -19,6 +20,11 @@ import { TagDoc } from './interfaces/tag-document.interfact';
 @Controller('tags')
 export class TagsController {
   constructor(private tagsService: TagsService) {}
+
+  @Get(':id')
+  getTag(@Param('id') id: string): Promise<TagDoc> {
+    return this.tagsService.getTag(id);
+  }
 
   @Get()
   getTags(

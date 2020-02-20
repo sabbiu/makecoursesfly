@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -18,18 +19,40 @@ export class TagsService {
     private readonly tagModel: Model<TagDoc>
   ) {}
 
+  async getTag(id: string): Promise<TagDoc> {
+    try {
+      return await this.tagModel.findById(id);
+    } catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
   async getTags(filterDto: GetTagsFilterDto): Promise<TagsPagination> {
     const { search, limit, offset, sortby, order } = filterDto;
 
+    const aggregation = [] as any;
+
     const query = {} as any;
-
     if (search) query.$text = { $search: search };
+    if (search) {
+      aggregation.push({ $match: query });
+    }
+    aggregation.push({
+      $lookup: {
+        from: 'posts',
+        localField: '_id',
+        foreignField: 'tags',
+        as: 'posts_db',
+      },
+    });
+    aggregation.push({
+      $project: { title: 1, createdAt: 1, postsCount: { $size: '$posts_db' } },
+    });
+    aggregation.push({ $sort: { [sortby]: order } });
+    aggregation.push({ $skip: offset });
+    aggregation.push({ $limit: limit });
 
-    const data = await this.tagModel
-      .find(query)
-      .sort({ [sortby]: order })
-      .skip(offset)
-      .limit(limit);
+    const data = await this.tagModel.aggregate(aggregation);
     const count = await this.tagModel.countDocuments(query);
 
     return { data, offset, limit, count };
@@ -39,12 +62,12 @@ export class TagsService {
     const { title } = createTagDto;
     const { _id } = user;
     try {
-      const newUser = await this.tagModel.create({
+      const newTag = await this.tagModel.create({
         title: title,
         createdBy: _id,
       });
-      // return await newUser.populate('createdBy').execPopulate();
-      return newUser;
+      // return await newTag.populate('createdBy').execPopulate();
+      return newTag;
     } catch (error) {
       this.handleError(error);
     }

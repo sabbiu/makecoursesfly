@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class AuthEffects {
   @Effect()
-  authLogin$: Observable<Action | Array<Action>> = this.action$.pipe(
+  authLogin$: Observable<Action | Array<Action>> = this.actions$.pipe(
     ofType<AuthActions.LoginStart>(AuthActions.LOGIN_START),
     switchMap(action =>
       this.authService.login(action.payload).pipe(
@@ -27,7 +27,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  register$: Observable<Action | Array<Action>> = this.action$.pipe(
+  register$: Observable<Action | Array<Action>> = this.actions$.pipe(
     ofType(AuthActions.REGISTER_START),
     switchMap((action: AuthActions.RegisterStart) =>
       this.authService.register(action.payload).pipe(
@@ -43,7 +43,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  fetchMe$ = this.action$.pipe(
+  fetchMe$ = this.actions$.pipe(
     ofType(AuthActions.ACCESS_TOKEN),
     switchMap((action: AuthActions.AccessTokenSuccess) =>
       this.authService.fetchMe().pipe(
@@ -70,7 +70,7 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
-  authRedirect$ = this.action$.pipe(
+  authRedirect$ = this.actions$.pipe(
     ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
     tap((actionData: AuthActions.AuthenticateSuccess | AuthActions.Logout) => {
       if (
@@ -84,7 +84,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  autoLogin$ = this.action$.pipe(
+  autoLogin$ = this.actions$.pipe(
     ofType(AuthActions.AUTO_LOGIN),
     map(() => {
       const accessToken = localStorage.getItem('accessToken');
@@ -99,7 +99,7 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
-  authLogout$ = this.action$.pipe(
+  authLogout$ = this.actions$.pipe(
     ofType(AuthActions.LOGOUT),
     tap(() => {
       localStorage.removeItem('accessToken');
@@ -138,7 +138,7 @@ export class AuthEffects {
   }
 
   constructor(
-    private action$: Actions,
+    private actions$: Actions,
     private router: Router,
     private notificationService: NotificationService,
     private authService: AuthService

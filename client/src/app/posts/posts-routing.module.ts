@@ -3,16 +3,21 @@ import { Routes, RouterModule } from '@angular/router';
 import { UserLoggedInGuard } from '../auth/user-logged-in-guard.service';
 import { AuthGuard } from '../auth/auth-guard.service';
 import { CreatePostComponent } from './create-post/create-post.component';
+import { PostDetailComponent } from './post-detail/post-detail.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'posts',
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'posts/new',
+        path: 'new',
         component: CreatePostComponent,
         canActivate: [UserLoggedInGuard],
+      },
+      {
+        path: ':id',
+        component: PostDetailComponent,
       },
     ],
   },

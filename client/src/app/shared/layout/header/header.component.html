@@ -1,11 +1,13 @@
-<nav class="navbar fixed-top navbar-expand-sm navbar-light bg-light">
+<nav class="navbar fixed-top navbar-expand navbar-light bg-light">
   <div class="hamburger" (click)="toggleSidebar()" [ngClass]="{'active' : !getSideBarState()}">
     <div class=" bar1"></div>
     <div class="bar2"></div>
     <div class="bar3"></div>
   </div>
 
-  <a class="navbar-brand" (click)="toggleSidebar()" [ngStyle]="{cursor: 'pointer'}">Amazing Courses</a>
+  <a class="navbar-brand d-block d-sm-none" (click)="toggleSidebar()" [ngStyle]="{cursor: 'pointer'}">Amazing</a>
+  <a class="navbar-brand d-none d-sm-block" (click)="toggleSidebar()" [ngStyle]="{cursor: 'pointer'}">Amazing
+    Courses</a>
 
   <ul class="navbar-nav ml-auto">
     <li class="nav-item" routerLinkActive="active" *ngIf="!(authState | async).loading && !(authState | async).user">
