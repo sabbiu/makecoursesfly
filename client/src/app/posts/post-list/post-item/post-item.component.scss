@@ -1,0 +1,14 @@
+a.out-link {
+  display: block;
+  white-space: nowrap;
+  width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  a {
+    text-decoration: none;
+    color: #212529;
+  }
+}

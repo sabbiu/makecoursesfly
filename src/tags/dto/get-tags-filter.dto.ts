@@ -17,8 +17,8 @@ export class GetTagsFilterDto {
   limit: number = 20;
 
   @IsOptional()
-  @IsIn(['title', 'createdAt'])
-  sortby: string = 'createdAt';
+  @IsIn(['title', 'createdAt', 'postsCount'])
+  sortby: string = 'postsCount';
 
   @IsOptional()
   @Transform(Number)

@@ -1,0 +1,21 @@
+<div class="d-flex justify-content-center" *ngIf="loading">
+  <span class="spinner-border"></span>
+</div>
+<div *ngIf="!loading && !!post">
+  <h2>{{post.title}}</h2>
+  <hr>
+  <h5>
+    <ng-container *ngFor="let tag of post.tags">
+      <span class="badge badge-light"><a [routerLink]="['/tags', tag._id]"
+          data-item="link">{{tag.title}}</a></span>&nbsp;&nbsp;
+    </ng-container>
+  </h5>
+  <!-- <app-link-preview [data]="urlMetadata"></app-link-preview> -->
+  <div class="d-flex justify-content-center" *ngIf="urlMdLoading">
+    <span class="spinner-border"></span>
+  </div>
+  <app-link-preview *ngIf="!urlMdLoading && !!urlMd" [data]="urlMd"></app-link-preview>
+  <div class="alert alert-danger" *ngIf="!urlMdLoading && !!urlMdError">
+    URL is not reachable
+  </div>
+</div>

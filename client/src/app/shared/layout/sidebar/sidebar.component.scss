@@ -160,7 +160,7 @@
           cursor: pointer;
         }
 
-        li.active a {
+        > li.active > a {
           color: #980303;
         }
 

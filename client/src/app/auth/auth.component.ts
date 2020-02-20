@@ -24,7 +24,7 @@ export class AuthComponent implements OnInit {
   isLogin: boolean;
   loading: boolean;
 
-  authState: Observable<fromAuth.AuthState>;
+  authState$: Observable<fromAuth.AuthState>;
 
   constructor(
     private route: ActivatedRoute,
@@ -70,7 +70,7 @@ export class AuthComponent implements OnInit {
       }
     });
 
-    this.authState = this.store.select('auth');
+    this.authState$ = this.store.select('auth');
   }
 
   onSubmit() {

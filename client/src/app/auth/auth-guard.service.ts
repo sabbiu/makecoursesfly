@@ -15,7 +15,7 @@ import * as AuthActions from './store/auth.actions';
 export class AuthGuard implements CanActivate {
   constructor(
     private store: Store<fromApp.AppState>,
-    private action$: Actions
+    private actions$: Actions
   ) {}
 
   canActivate(
@@ -40,13 +40,13 @@ export class AuthGuard implements CanActivate {
             this.store.dispatch(new AuthActions.AutoLogin());
           }, 0);
 
-          const responseOK = this.action$.pipe(
+          const responseOK = this.actions$.pipe(
             ofType(AuthActions.AUTHENTICATE_SUCCESS)
           );
-          const responseError = this.action$.pipe(
+          const responseError = this.actions$.pipe(
             ofType(AuthActions.AUTHENTICATE_FAIL)
           );
-          const responseNoUser = this.action$.pipe(
+          const responseNoUser = this.actions$.pipe(
             ofType(AuthActions.AUTO_LOGIN_NO_USER)
           );
           return race(responseError, responseOK, responseNoUser).pipe(

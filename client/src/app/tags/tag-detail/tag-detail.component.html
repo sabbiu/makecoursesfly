@@ -1,0 +1,5 @@
+<div *ngIf="!(tagsState$ | async).tagLoading && !!(tagsState$ | async).tag">
+  <h2> {{(tagsState$ | async).tag.title}}</h2>
+  <hr>
+</div>
+<app-post-list from="tags"></app-post-list>

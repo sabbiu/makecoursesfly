@@ -33,7 +33,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.menusSub = this.sidebarService.menus.subscribe(menus => {
+    this.menusSub = this.sidebarService.menus$.subscribe(menus => {
       this.menus = menus;
     });
 
