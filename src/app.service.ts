@@ -4,10 +4,6 @@ import { getUrlMetadataHelper } from './helpers/getUrlMetadata.helper';
 
 @Injectable()
 export class AppService {
-  getAPIStatus(): { status: string } {
-    return { status: 'success' };
-  }
-
   async getUrlMetadata(urlInput: string): Promise<UrlMetadata> {
     try {
       const { url, title, image, description } = await getUrlMetadataHelper(

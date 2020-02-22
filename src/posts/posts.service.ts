@@ -12,8 +12,6 @@ import { PostDoc } from './interfaces/post-document.interface';
 import { PostsPagination } from './interfaces/posts-pagination.interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
-import { Post } from './interfaces/post.interface';
-import { getUrlMetadataHelper } from '../helpers/getUrlMetadata.helper';
 
 @Injectable()
 export class PostsService {
@@ -93,7 +91,7 @@ export class PostsService {
       // return await post.populate('tags', 'title').execPopulate();
       return post._id;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       this.handleError(error);
     }
   }

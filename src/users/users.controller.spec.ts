@@ -27,15 +27,8 @@ describe('UsersController', () => {
         name: 'Test',
         email: 'test@test.com',
       };
-      const expectedResult = {
-        id: 'uuid',
-        username: 'test',
-        photo: 'http://example.com',
-        name: 'Test',
-        email: 'test@test.com',
-      };
       const result = controller.me(mockUser as any);
-      expect(result).toEqual(expectedResult);
+      expect(result).toEqual(mockUser);
     });
   });
 });
