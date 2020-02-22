@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Actions, ofType, Effect } from '@ngrx/effects';
-import { Observable, of } from 'rxjs';
+import { Actions, ofType, Effect, createEffect } from '@ngrx/effects';
+import { Observable, of, asyncScheduler } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 import {
   switchMap,
@@ -18,19 +18,20 @@ import * as fromApp from '../../core/store/app.reducer';
 @Injectable()
 export class TagsEffects {
   @Effect()
-  fetchAutocomplete$: Observable<Action> = this.actions$.pipe(
-    ofType(TagsActions.TAGS_AUTOCOMPLETE_START),
-    debounceTime(300),
-    switchMap((action: TagsActions.TagsAutocompleteStart) => {
-      return this.tagsService
-        .fetchAll({ search: action.payload, offset: 0, limit: 10 })
-        .pipe(
-          map(
-            response => new TagsActions.TagsAutocompleteSuccess(response.data)
+  fetchAutocomplete$ = ({ debounce = 300, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType(TagsActions.TAGS_AUTOCOMPLETE_START),
+      debounceTime(debounce, scheduler),
+      switchMap((action: TagsActions.TagsAutocompleteStart) =>
+        this.tagsService
+          .fetchAll({ search: action.payload, offset: 0, limit: 10 })
+          .pipe(
+            map(
+              response => new TagsActions.TagsAutocompleteSuccess(response.data)
+            )
           )
-        );
-    })
-  );
+      )
+    );
 
   @Effect()
   getTag$: Observable<Action> = this.actions$.pipe(
@@ -48,7 +49,7 @@ export class TagsEffects {
   );
 
   @Effect()
-  getPosts$ = this.actions$.pipe(
+  getTags$ = this.actions$.pipe(
     ofType(TagsActions.GET_TAGS_START),
     concatMap((action: TagsActions.GetTagsStart) =>
       of(action).pipe(withLatestFrom(this.store.select('tags')))

@@ -8,7 +8,9 @@ import { SidebarService } from './sidebar/sidebar.service';
 })
 export class LayoutComponent {
   title = 'angular-pro-sidebar';
+
   constructor(public sidebarservice: SidebarService) {}
+
   toggleSidebar() {
     this.sidebarservice.setSidebarState(!this.sidebarservice.getSidebarState());
   }
