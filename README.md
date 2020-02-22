@@ -14,7 +14,7 @@ When you want to learn about new things, it is really difficult to find out whic
 
 - [x] ~~Initial Setup w/ CI-CD~~
 - [x] ~~User authentication handling (token based)~~
-- [ ] Tags and Posts
+- [x] ~~Tags and Posts~~
 - [ ] Opinion
 - [ ] User Profile
 - [ ] Followers System

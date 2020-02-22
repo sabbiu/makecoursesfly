@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { Observable, of, asyncScheduler } from 'rxjs';
 import { Action, Store } from '@ngrx/store';
 import { Actions, ofType, Effect } from '@ngrx/effects';
 import {
@@ -40,18 +40,19 @@ export class PostsEffects {
   );
 
   @Effect()
-  getUrlMetadata$: Observable<Action> = this.actions$.pipe(
-    ofType(PostsActions.POST_URL_METADATA_START),
-    debounceTime(800),
-    switchMap((action: PostsActions.GetPostUrlMetadataStart) =>
-      this.postsService.getUrlMetadata(action.payload).pipe(
-        map(response => new PostsActions.GetPostUrlMetadataSuccess(response)),
-        catchError(error =>
-          of(new PostsActions.GetPostUrlMetadataError('Url is unreachable'))
+  getUrlMetadata$ = ({ debounce = 800, scheduler = asyncScheduler } = {}) =>
+    this.actions$.pipe(
+      ofType(PostsActions.POST_URL_METADATA_START),
+      debounceTime(debounce, scheduler),
+      switchMap((action: PostsActions.GetPostUrlMetadataStart) =>
+        this.postsService.getUrlMetadata(action.payload).pipe(
+          map(response => new PostsActions.GetPostUrlMetadataSuccess(response)),
+          catchError(error =>
+            of(new PostsActions.GetPostUrlMetadataError('Url is unreachable'))
+          )
         )
       )
-    )
-  );
+    );
 
   @Effect()
   getPost$: Observable<Action | Action[]> = this.actions$.pipe(

@@ -1,6 +1,27 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 import { LayoutComponent } from './layout.component';
+import { SidebarService } from './sidebar/sidebar.service';
+import { Component } from '@angular/core';
+
+class MockSidebarService {
+  getSidebarState = jasmine.createSpy('getSidebarState');
+  setSidebarState = jasmine.createSpy('setSidebarState');
+}
+
+@Component({
+  selector: 'app-header',
+  template: '<p>Mock Header Component</p>',
+})
+class MockHeaderComponent {}
+
+@Component({
+  selector: 'app-sidebar',
+  template: '<p>Mock Sidebar Component</p>',
+})
+class MockSidebarComponent {}
 
 describe('LayoutComponent', () => {
   let component: LayoutComponent;
@@ -8,9 +29,14 @@ describe('LayoutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LayoutComponent ]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule, PerfectScrollbarModule],
+      declarations: [
+        LayoutComponent,
+        MockHeaderComponent,
+        MockSidebarComponent,
+      ],
+      providers: [{ provide: SidebarService, useClass: MockSidebarService }],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +45,7 @@ describe('LayoutComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 });
