@@ -10,6 +10,6 @@ export class UsersController {
   @UseGuards(AuthGuard())
   me(@GetUser() user: UserDoc): UserProfile {
     const { _id, username, name, photo, email } = user;
-    return { id: _id, username, name, photo, email };
+    return { _id, username, name, photo, email };
   }
 }

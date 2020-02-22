@@ -11,12 +11,15 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class AuthEffects {
   @Effect()
-  authLogin$: Observable<Action | Array<Action>> = this.action$.pipe(
+  authLogin$: Observable<Action | Array<Action>> = this.actions$.pipe(
     ofType<AuthActions.LoginStart>(AuthActions.LOGIN_START),
     switchMap(action =>
       this.authService.login(action.payload).pipe(
         map(
-          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+          tokenData =>
+            new AuthActions.AccessTokenSuccess({
+              accessToken: tokenData.accessToken,
+            })
         ),
         catchError(this.handleError)
       )
@@ -24,12 +27,15 @@ export class AuthEffects {
   );
 
   @Effect()
-  register$: Observable<Action | Array<Action>> = this.action$.pipe(
+  register$: Observable<Action | Array<Action>> = this.actions$.pipe(
     ofType(AuthActions.REGISTER_START),
     switchMap((action: AuthActions.RegisterStart) =>
       this.authService.register(action.payload).pipe(
         map(
-          tokenData => new AuthActions.AccessTokenSuccess(tokenData.accessToken)
+          tokenData =>
+            new AuthActions.AccessTokenSuccess({
+              accessToken: tokenData.accessToken,
+            })
         ),
         catchError(this.handleError)
       )
@@ -37,18 +43,19 @@ export class AuthEffects {
   );
 
   @Effect()
-  fetchMe$ = this.action$.pipe(
+  fetchMe$ = this.actions$.pipe(
     ofType(AuthActions.ACCESS_TOKEN),
     switchMap((action: AuthActions.AccessTokenSuccess) =>
       this.authService.fetchMe().pipe(
         map(resData => {
-          localStorage.setItem('accessToken', action.payload);
+          localStorage.setItem('accessToken', action.payload.accessToken);
           return new AuthActions.AuthenticateSuccess({
             id: resData._id,
             username: resData.username,
             email: resData.email,
             name: resData.name,
             photo: resData.photo,
+            redirect: action.payload.redirect,
           });
         }),
         catchError((errorRes: any) => {
@@ -63,27 +70,36 @@ export class AuthEffects {
   );
 
   @Effect({ dispatch: false })
-  authRedirect$ = this.action$.pipe(
+  authRedirect$ = this.actions$.pipe(
     ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
-    tap(() => {
-      this.router.navigate(['/']);
+    tap((actionData: AuthActions.AuthenticateSuccess | AuthActions.Logout) => {
+      if (
+        actionData.type === AuthActions.LOGOUT ||
+        (actionData.type === AuthActions.AUTHENTICATE_SUCCESS &&
+          actionData.payload.redirect)
+      ) {
+        this.router.navigate(['/']);
+      }
     })
   );
 
   @Effect()
-  autoLogin$ = this.action$.pipe(
+  autoLogin$ = this.actions$.pipe(
     ofType(AuthActions.AUTO_LOGIN),
     map(() => {
       const accessToken = localStorage.getItem('accessToken');
       if (accessToken) {
-        return new AuthActions.AccessTokenSuccess(accessToken);
+        return new AuthActions.AccessTokenSuccess({
+          accessToken,
+          redirect: false,
+        });
       }
       return new AuthActions.AutoLoginNoUser();
     })
   );
 
   @Effect({ dispatch: false })
-  authLogout$ = this.action$.pipe(
+  authLogout$ = this.actions$.pipe(
     ofType(AuthActions.LOGOUT),
     tap(() => {
       localStorage.removeItem('accessToken');
@@ -122,7 +138,7 @@ export class AuthEffects {
   }
 
   constructor(
-    private action$: Actions,
+    private actions$: Actions,
     private router: Router,
     private notificationService: NotificationService,
     private authService: AuthService

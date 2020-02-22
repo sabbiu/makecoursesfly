@@ -1,0 +1,72 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-10 offset-sm-1 col-lg-8 offset-lg-2">
+    <form [formGroup]="form" (ngSubmit)="showConfirmDialog()">
+      <h2>Add New Course</h2>
+      <hr>
+      <div class="form-group ">
+        <label for="title">Title *</label>
+        <input class="form-control" id="title" type="text"
+          [ngClass]="{'is-invalid': fhService.isInvalid(title), 'is-valid': fhService.isValid(title)}"
+          placeholder="Enter a title" formControlName="title">
+        <div class="invalid-feedback" *ngIf="title.errors">
+          <ng-container *ngIf="title.errors.required">Title is required</ng-container>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="url">URL *</label>
+        <input class="form-control is-invalid" id="url" type="text"
+          [ngClass]="{'is-invalid': fhService.isInvalid(url), 'is-valid': fhService.isValid(url)}"
+          placeholder="Enter a valid URL" formControlName="url" (keyup)="onUrlEntered()">
+        <div class="invalid-feedback" *ngIf="url.errors">
+          <ng-container *ngIf="url.errors.required">URL is required</ng-container>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center" *ngIf="(postsState$ | async).urlMdLoading">
+        <span class="spinner-border"></span>
+      </div>
+      <app-link-preview *ngIf="!(postsState$ | async).urlMdLoading && !!(postsState$ | async).urlMd"
+        [data]="(postsState$ | async).urlMd"></app-link-preview>
+      <div class="alert alert-danger" *ngIf="!(postsState$ | async).urlMdLoading && !!(postsState$ | async).urlMdError">
+        URL is not reachable
+      </div>
+
+      <div class="form-group">
+        <label for="tags">Tags *</label>
+        <ng-select id="tags" [items]="(tagsState$ | async).autocompleteData" bindLabel="title" [trackByFn]="trackByFn"
+          notFoundText="Enter few characters..." placeholder="Type to search" [addTag]="true" [multiple]="true"
+          [hideSelected]="true" [minTermLength]="2" [loading]="(tagsState$ | async).autocompleteLoading"
+          (search)="onTextChange($event)" formControlName="tags">
+        </ng-select>
+        <div class="select-invalid-feedback" *ngIf="fhService.isInvalid(tags) && tags.errors">
+          <ng-container *ngIf="tags.errors.required">Tags are required</ng-container>
+          <ng-container *ngIf="!!tags.errors.minlength">There must be atleast 3 tags</ng-container>
+        </div>
+      </div>
+
+      <button class="btn btn-success" type="submit"
+        [disabled]="form.invalid || (postsState$ | async).urlMdLoading || !!(postsState$ | async).urlMdError">Submit</button>
+      <app-modal #confirm title="Does everything looks good?">
+        <div class="modal-body">
+          <p>
+            You're about to submit a new course. Be sure to check whether all the details are correct.
+          </p>
+          <h5>{{title.value}}</h5>
+          <app-link-preview *ngIf="!(postsState$ | async).urlMdLoading && !!(postsState$ | async).urlMd"
+            [data]="(postsState$ | async).urlMd"></app-link-preview>
+          <h5>
+            <ng-container *ngFor="let tag of tags.value">
+              <span class="badge badge-light">{{tag.title}}</span>&nbsp;&nbsp;
+            </ng-container>
+          </h5>
+        </div>
+        <div class="modal-footer" app-modal-footer>
+          <button class="btn btn-primary" type="button" [disabled]="(postsState$ | async).createLoading"
+            (click)="onSubmit()">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"
+              *ngIf="(postsState$ | async).createLoading"></span> Confirm</button>
+        </div>
+      </app-modal>
+    </form>
+  </div>
+</div>

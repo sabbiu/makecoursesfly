@@ -8,7 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { randomNumber } from '../helpers/randomNumber';
+import { randomNumber } from '../helpers/randomNumber.helper';
 import { UserDoc } from './interfaces/user-document.interface';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthLoginDto } from './dto/auth-login.dto';
