@@ -1,27 +1,13 @@
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, empty } from 'rxjs';
-import { AuthEffects } from './auth.effects';
 import { Actions } from '@ngrx/effects';
 import { hot, cold } from 'jasmine-marbles';
+import { Observable } from 'rxjs';
+import { AuthEffects } from './auth.effects';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService, AuthResponseData } from '../auth.service';
 import * as AuthActions from './auth.actions';
-import { Router } from '@angular/router';
-
-export class TestActions extends Actions {
-  constructor() {
-    super(empty());
-  }
-
-  set stream(source: Observable<any>) {
-    this.source = source;
-  }
-}
-
-export function getActions() {
-  return new TestActions();
-}
 
 class MockAuthService {
   login = jasmine.createSpy('login');
@@ -38,7 +24,7 @@ class MockRouterService {
 }
 
 describe('AuthEffects', () => {
-  let actions$: TestActions;
+  let actions$: Observable<any>;
   let effects: AuthEffects;
   let notificationService: MockNotificationService;
   let authService: MockAuthService;
@@ -50,7 +36,6 @@ describe('AuthEffects', () => {
         AuthEffects,
         provideMockActions(() => actions$),
         { provide: AuthService, useClass: MockAuthService },
-        { provide: Actions, useFactory: getActions },
         { provide: NotificationService, useClass: MockNotificationService },
         { provide: Router, useClass: MockRouterService },
       ],
@@ -92,9 +77,9 @@ describe('AuthEffects', () => {
     it('should return an AuthTokenSuccess, with the login, on success', () => {
       const action = new AuthActions.LoginStart(user);
       const result = { accessToken: 'valid token' };
-      const completion = new AuthActions.AccessTokenSuccess('valid token');
+      const completion = new AuthActions.AccessTokenSuccess(result);
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-b|', { b: result });
       const expected = cold('--c', { c: completion });
       authService.login.and.returnValue(response);
@@ -107,7 +92,7 @@ describe('AuthEffects', () => {
       const error = 'An unknown error occurred!';
       const completion = new AuthActions.AuthenticateFail(error);
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);
       const expected = cold('--b', { b: completion });
       authService.login.and.returnValue(response);
@@ -129,9 +114,9 @@ describe('AuthEffects', () => {
     it('should return an AuthTokenSuccess, with the register, on success', () => {
       const action = new AuthActions.RegisterStart(user);
       const result = { accessToken: 'valid token' };
-      const completion = new AuthActions.AccessTokenSuccess('valid token');
+      const completion = new AuthActions.AccessTokenSuccess(result);
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-b|', { b: result });
       const expected = cold('--c', { c: completion });
       authService.register.and.returnValue(response);
@@ -144,7 +129,7 @@ describe('AuthEffects', () => {
       const error = 'An unknown error occurred!';
       const completion = new AuthActions.AuthenticateFail(error);
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);
       const expected = cold('--b', { b: completion });
       authService.register.and.returnValue(response);
@@ -161,6 +146,7 @@ describe('AuthEffects', () => {
       photo: 'http://example.com',
       name: 'Test',
       email: 'test@test.com',
+      redirect: true,
     } as AuthActions.AuthenticateSuccessPayload;
 
     const result = {
@@ -172,10 +158,13 @@ describe('AuthEffects', () => {
     } as AuthResponseData;
 
     it('should return an AuthenticateSuccess, on success', () => {
-      const action = new AuthActions.AccessTokenSuccess('valid token');
+      const action = new AuthActions.AccessTokenSuccess({
+        accessToken: 'valid token',
+        redirect: true,
+      });
       const completion = new AuthActions.AuthenticateSuccess(user);
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-b|', { b: result });
       const expected = cold('--c', { c: completion });
       authService.fetchMe.and.returnValue(response);
@@ -185,11 +174,13 @@ describe('AuthEffects', () => {
     });
 
     it('should return an Logout, with the register, on failure due to unauthorized exception', () => {
-      const action = new AuthActions.AccessTokenSuccess('valid token');
+      const action = new AuthActions.AccessTokenSuccess({
+        accessToken: 'valid token',
+      });
       const error = { status: 401 };
       const completion = new AuthActions.Logout();
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);
       const expected = cold('--b', { b: completion });
       authService.fetchMe.and.returnValue(response);
@@ -198,10 +189,12 @@ describe('AuthEffects', () => {
     });
 
     it('should return nothing, with the register, on failure', () => {
-      const action = new AuthActions.AccessTokenSuccess('valid token');
+      const action = new AuthActions.AccessTokenSuccess({
+        accessToken: 'valid token',
+      });
       const error = 'error!';
 
-      actions$.stream = hot('-a', { a: action });
+      actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);
       const expected = cold('');
       authService.fetchMe.and.returnValue(response);
@@ -222,20 +215,36 @@ describe('AuthEffects', () => {
     it('should call navigate method off router, when Logout', () => {
       const action = new AuthActions.Logout();
 
-      actions$.stream = hot('a', { a: action });
+      actions$ = hot('a', { a: action });
 
       effects.authRedirect$.subscribe(() => {
         expect(routerService.navigate).toHaveBeenCalled();
       });
     });
 
-    it('should call navigate method off router, when Authentication Success', () => {
-      const action = new AuthActions.AuthenticateSuccess(user);
+    it('should call navigate method off router, when Authentication Success & redirect is true', () => {
+      const action = new AuthActions.AuthenticateSuccess({
+        ...user,
+        redirect: true,
+      });
 
-      actions$.stream = hot('a', { a: action });
+      actions$ = hot('a', { a: action });
 
       effects.authRedirect$.subscribe(() => {
         expect(routerService.navigate).toHaveBeenCalled();
+      });
+    });
+
+    it('should not call navigate method off router, when Authentication Success & redirect is false', () => {
+      const action = new AuthActions.AuthenticateSuccess({
+        ...user,
+        redirect: false,
+      });
+
+      actions$ = hot('a', { a: action });
+
+      effects.authRedirect$.subscribe(() => {
+        expect(routerService.navigate).not.toHaveBeenCalled();
       });
     });
   });
@@ -244,9 +253,12 @@ describe('AuthEffects', () => {
     it('should return AccessTokenSuccess, if token found, when auto login', () => {
       localStorage.setItem('accessToken', 'valid token');
       const action = new AuthActions.AutoLogin();
-      const completion = new AuthActions.AccessTokenSuccess('valid token');
+      const completion = new AuthActions.AccessTokenSuccess({
+        accessToken: 'valid token',
+        redirect: false,
+      });
 
-      actions$.stream = hot('a', { a: action });
+      actions$ = hot('a', { a: action });
       const expected = cold('b', { b: completion });
 
       expect(effects.autoLogin$).toBeObservable(expected);
@@ -256,7 +268,7 @@ describe('AuthEffects', () => {
       const action = new AuthActions.AutoLogin();
       const completion = new AuthActions.AutoLoginNoUser();
 
-      actions$.stream = hot('a', { a: action });
+      actions$ = hot('a', { a: action });
       const expected = cold('b', { b: completion });
 
       expect(effects.autoLogin$).toBeObservable(expected);
@@ -268,7 +280,7 @@ describe('AuthEffects', () => {
       localStorage.setItem('accessToken', 'valid token');
       const action = new AuthActions.Logout();
 
-      actions$.stream = hot('a', { a: action });
+      actions$ = hot('a', { a: action });
 
       effects.authLogout$.subscribe(() => {
         expect(localStorage.getItem('accessToken')).toBeUndefined();
