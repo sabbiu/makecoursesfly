@@ -37,6 +37,8 @@ export class CreatePostComponent implements OnInit {
   ngOnInit() {
     this.tagsState$ = this.store.select('tags');
     this.postsState$ = this.store.select('posts');
+
+    this.store.dispatch(new PostsActions.ClearUrlMetadata());
   }
 
   trackByFn(item: Tag) {

@@ -25,10 +25,7 @@ const initialState: PostsState = {
   urlMdLoading: false,
   postLoading: false,
   post: null,
-  postsFilters: {
-    offset: 2,
-    limit: 5,
-  },
+  postsFilters: { offset: 2, limit: 5 },
   postsLoading: false,
   posts: [],
   postsEnd: false,
@@ -44,15 +41,10 @@ export function postsReducer(
       return { ...state, createLoading: true, createError: null };
 
     case PostsActions.CREATE_POST_ERROR:
-      return {
-        ...state,
-        createLoading: false,
-        createError: action.payload,
-        // urlMd: null,
-      };
+      return { ...state, createLoading: false, createError: action.payload };
 
     case PostsActions.CREATE_POST_SUCCESS:
-      return { ...state, createLoading: false, urlMd: null };
+      return { ...state, createLoading: false };
 
     case PostsActions.POST_URL_METADATA_START:
       return { ...state, urlMdLoading: true, urlMdError: null, urlMd: null };
@@ -62,6 +54,9 @@ export function postsReducer(
 
     case PostsActions.POST_URL_METADATA_ERROR:
       return { ...state, urlMdLoading: false, urlMdError: action.payload };
+
+    case PostsActions.CLEAR_URL_METADATA:
+      return { ...state, urlMd: null };
 
     case PostsActions.GET_POST_START:
       return { ...state, postLoading: true };
