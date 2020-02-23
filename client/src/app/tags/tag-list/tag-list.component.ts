@@ -43,10 +43,12 @@ export class TagListComponent implements OnInit, OnDestroy {
   }
 
   onScrollEnd() {
-    this.offset += this.limit;
-    this.store.dispatch(
-      new TagsActions.GetTagsStart({ offset: this.offset, limit: this.limit })
-    );
+    if (!this.loading) {
+      this.offset += this.limit;
+      this.store.dispatch(
+        new TagsActions.GetTagsStart({ offset: this.offset, limit: this.limit })
+      );
+    }
   }
 
   ngOnDestroy() {

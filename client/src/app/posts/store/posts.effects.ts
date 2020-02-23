@@ -29,8 +29,6 @@ export class PostsEffects {
           action.cb();
         }),
         map(response => {
-          console.log(response);
-
           this.router.navigate(['/posts', response]);
           return new PostsActions.CreatePostSuccess();
         }),

@@ -13,6 +13,7 @@ export const CREATE_POST_ERROR = '[Posts] Create Post Error';
 export const POST_URL_METADATA_START = '[Posts] URL metadata start';
 export const POST_URL_METADATA_SUCCESS = '[Posts] URL metadata success';
 export const POST_URL_METADATA_ERROR = '[Posts] URL metadata error';
+export const CLEAR_URL_METADATA = '[Posts] Clear URL metadata';
 export const GET_POST_START = '[Posts] Get single post start';
 export const GET_POST_SUCCESS = '[Posts] Get single post success';
 export const GET_POST_ERROR = '[Posts] Get single post error';
@@ -80,6 +81,10 @@ export class GetPostsError implements Action {
   readonly type = GET_POSTS_ERROR;
 }
 
+export class ClearUrlMetadata implements Action {
+  readonly type = CLEAR_URL_METADATA;
+}
+
 export type PostsActionTypes =
   | CreatePostStart
   | CreatePostSuccess
@@ -92,4 +97,5 @@ export type PostsActionTypes =
   | GetPostError
   | GetPostsStart
   | GetPostsSuccess
-  | GetPostsError;
+  | GetPostsError
+  | ClearUrlMetadata;
