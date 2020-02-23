@@ -2,7 +2,7 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TagsService } from './tags.service';
-import { TagDoc } from './interfaces/tag-document.interfact';
+import { TagDoc } from './interfaces/tag-document.interface';
 import {
   NotFoundException,
   ConflictException,
