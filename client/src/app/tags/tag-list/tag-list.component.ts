@@ -43,7 +43,7 @@ export class TagListComponent implements OnInit, OnDestroy {
   }
 
   onScrollEnd() {
-    if (!this.loading) {
+    if (!this.loading && !this.tagsEnd) {
       this.offset += this.limit;
       this.store.dispatch(
         new TagsActions.GetTagsStart({ offset: this.offset, limit: this.limit })

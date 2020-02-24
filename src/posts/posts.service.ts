@@ -3,6 +3,8 @@ import {
   InternalServerErrorException,
   ConflictException,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,11 +14,15 @@ import { PostDoc } from './interfaces/post-document.interface';
 import { PostsPagination } from './interfaces/posts-pagination.interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
+import { OpinionsService } from '../opinions/opinions.service';
 
 @Injectable()
 export class PostsService {
   constructor(
-    private readonly tagService: TagsService,
+    private readonly tagsService: TagsService,
+
+    @Inject(forwardRef(() => OpinionsService))
+    private readonly opinionsService: OpinionsService,
 
     @InjectModel('Post')
     private readonly postModel: Model<PostDoc>
@@ -52,18 +58,18 @@ export class PostsService {
     createPostDto: CreatePostDto,
     user: UserDoc
   ): Promise<string> {
-    const { title, url, tagsNew, tagsOld } = createPostDto;
+    const { title, url, tagsNew, tagsOld, opinion } = createPostDto;
     const { _id } = user;
 
     try {
       let tags: string[] = [];
       if (tagsNew) {
         const found = (
-          await this.tagService.find({ title: { $in: tagsNew } })
+          await this.tagsService.find({ title: { $in: tagsNew } })
         ).map(tag => tag.title);
 
         const inserted = (
-          await this.tagService.insertMany(
+          await this.tagsService.insertMany(
             tagsNew
               .filter(tag => !found.includes(tag))
               .map(tag => ({ title: tag, createdBy: _id }))
@@ -75,7 +81,7 @@ export class PostsService {
 
       if (tagsOld) {
         const found = (
-          await this.tagService.find({ _id: { $in: tagsOld } })
+          await this.tagsService.find({ _id: { $in: tagsOld } })
         ).map(tag => tag._id);
 
         tags = [...tags, ...found];
@@ -87,6 +93,12 @@ export class PostsService {
         tags,
         createdBy: _id,
       });
+
+      await this.opinionsService.createOpinion(
+        { text: opinion },
+        post._id,
+        user
+      );
 
       // return await post.populate('tags', 'title').execPopulate();
       return post._id;

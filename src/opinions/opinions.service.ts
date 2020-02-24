@@ -3,13 +3,15 @@ import {
   InternalServerErrorException,
   ConflictException,
   NotFoundException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { OpinionDoc } from './interfaces/opinion-document.interface';
 import { CreateOpinionDto } from './dto/create-opinion.dto';
-import { UserDoc } from 'src/auth/interfaces/user-document.interface';
-import { PostsService } from 'src/posts/posts.service';
+import { UserDoc } from '../auth/interfaces/user-document.interface';
+import { PostsService } from '../posts/posts.service';
 import { GetOpinionsFilterDto } from './dto/get-opinions-filter.dto';
 import { OpinionsPagination } from './interfaces/opinions-pagination.interface';
 import { UpdateOpinionDto } from './dto/update-opinion.dto';
@@ -19,16 +21,19 @@ export class OpinionsService {
   constructor(
     @InjectModel('Opinion')
     private readonly opinionModel: Model<OpinionDoc>,
+    @Inject(forwardRef(() => PostsService))
     private postsService: PostsService
   ) {}
 
   async getPostOpinions(
     filterDto: GetOpinionsFilterDto,
-    postId: string
+    postId: string,
+    user: UserDoc
   ): Promise<OpinionsPagination> {
     const { search, sortby, limit, offset, order } = filterDto;
 
     const query = {} as any;
+    if (user) query.createdBy = { $nin: user._id };
     if (search) query.$text = { $search: search };
     query.post = postId;
 
@@ -51,7 +56,7 @@ export class OpinionsService {
     if (opinions.length) {
       return opinions[0];
     }
-    return null;
+    throw new NotFoundException();
   }
 
   async updateOpinion(
@@ -65,7 +70,7 @@ export class OpinionsService {
     if (!updated)
       throw new NotFoundException(`Opinion with id: ${id} doesn't exist`);
 
-    return updated.id;
+    return updated._id;
   }
 
   async deleteOpinion(id: string): Promise<void> {

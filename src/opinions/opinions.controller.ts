@@ -19,6 +19,7 @@ import { GetOpinionsFilterDto } from './dto/get-opinions-filter.dto';
 import { OpinionsPagination } from './interfaces/opinions-pagination.interface';
 import { OpinionDoc } from './interfaces/opinion-document.interface';
 import { UpdateOpinionDto } from './dto/update-opinion.dto';
+import { OptionalAuthGuard } from 'src/auth/optional-auth-guard.service';
 
 @Controller('opinions')
 export class OpinionsController {
@@ -52,12 +53,14 @@ export class OpinionsController {
   }
 
   @Get('post/:id')
+  @UseGuards(OptionalAuthGuard)
   getPostOpinions(
     @Query(new ValidationPipe({ transform: true }))
     filterDto: GetOpinionsFilterDto,
-    @Param('id') postId: string
+    @Param('id') postId: string,
+    @GetUser() user: UserDoc
   ): Promise<OpinionsPagination> {
-    return this.opinionsService.getPostOpinions(filterDto, postId);
+    return this.opinionsService.getPostOpinions(filterDto, postId, user);
   }
 
   @Get('post/:id/myopinion')

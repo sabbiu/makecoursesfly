@@ -9,6 +9,7 @@ import { PostDetailComponent } from './post-detail/post-detail.component';
 import { SharedModule } from '../shared/shared.module';
 import { PostListComponent } from './post-list/post-list.component';
 import { PostItemComponent } from './post-list/post-item/post-item.component';
+import { OpinionsModule } from '../opinions/opinions.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { PostItemComponent } from './post-list/post-item/post-item.component';
     NgSelectModule,
     SharedModule,
     InfiniteScrollModule,
+    OpinionsModule,
   ],
   exports: [PostsRoutingModule, PostListComponent],
 })

@@ -1,0 +1,36 @@
+<div class="row my-3">
+  <div class="col-2 col-xl-1">
+    <img class="w-100" [src]="user.photo" />
+  </div>
+  <div class="col-10 col-xl-11">
+    <div class="card">
+      <div class="card-header">
+        <strong>@{{user.username}}</strong>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <textarea class="form-control" placeholder="Have you taken this course? Comment your opinion..." rows="4"
+              [ngClass]="{'is-invalid': fhService.isInvalid(text), 'is-valid': fhService.isValid(text)}"
+              formControlName="text"></textarea>
+            <div class="invalid-feedback" *ngIf="text.errors">
+              <ng-container *ngIf="text.errors.required">Opinion is required</ng-container>
+              <ng-container *ngIf="!!text.errors.minlength">Must be atleast 20 characters</ng-container>
+              <ng-container *ngIf="!!text.errors.maxlength">Must be less than 500 characters</ng-container>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success" *ngIf="!editMode"
+            [disabled]="form.invalid || createLoading"><span class="spinner-border spinner-border-sm" aria-hidden="true"
+              *ngIf="createLoading"></span> Post</button>
+          <span *ngIf="editMode">
+            <button type="submit" class="btn btn-success"
+              [disabled]="form.invalid || !form.dirty || updateLoading"><span class="spinner-border spinner-border-sm"
+                aria-hidden="true" *ngIf="updateLoading"></span>
+              Update</button>
+            <button class="btn btn-link" (click)="onEditCancel()">Cancel</button>
+          </span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

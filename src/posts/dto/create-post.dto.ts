@@ -30,4 +30,7 @@ export class CreatePostDto {
   })
   @IsString({ each: true })
   tagsOld: string[];
+
+  @IsNotEmpty()
+  opinion: string;
 }

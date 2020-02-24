@@ -67,7 +67,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onScrollEnd() {
-    if (!this.loading) {
+    if (!this.loading && !this.postsEnd) {
       this.offset += this.limit;
       this.store.dispatch(
         new PostsActions.GetPostsStart({

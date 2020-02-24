@@ -44,6 +44,18 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label>Opinion *</label>
+        <textarea class="form-control" placeholder="Comment your opinion..." rows="4"
+          [ngClass]="{'is-invalid': fhService.isInvalid(opinion), 'is-valid': fhService.isValid(opinion)}"
+          formControlName="opinion"></textarea>
+        <div class="invalid-feedback" *ngIf="opinion.errors">
+          <ng-container *ngIf="opinion.errors.required">Opinion is required</ng-container>
+          <ng-container *ngIf="!!opinion.errors.minlength">Must be atleast 20 characters</ng-container>
+          <ng-container *ngIf="!!opinion.errors.maxlength">Must be less than 500 characters</ng-container>
+        </div>
+      </div>
+
       <button class="btn btn-success" type="submit"
         [disabled]="form.invalid || (postsState$ | async).urlMdLoading || !!(postsState$ | async).urlMdError">Submit</button>
       <app-modal #confirm title="Does everything looks good?">

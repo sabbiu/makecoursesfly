@@ -75,7 +75,7 @@ export function tagsReducer(
       };
 
     case TagsActions.GET_TAGS_ERROR:
-      return { ...state, postsLoading: false };
+      return { ...state, tagsLoading: false };
 
     default:
       return state;

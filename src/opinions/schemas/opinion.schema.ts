@@ -23,4 +23,8 @@ export const OpinionSchema = new Schema(
   }
 );
 
+OpinionSchema.pre('find', function() {
+  this.populate('createdBy', '_id username photo');
+});
+
 OpinionSchema.index({ text: 'text' });

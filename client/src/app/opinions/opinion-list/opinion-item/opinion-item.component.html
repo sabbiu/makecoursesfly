@@ -1,0 +1,21 @@
+<div class="row my-3">
+  <div class="col-2 col-xl-1">
+    <img class="w-100" [src]="opinion.createdBy.photo" />
+  </div>
+  <div class="col-10 col-xl-11">
+    <div class="card">
+      <div class="card-header">
+        <span><strong>@{{opinion.createdBy.username}}</strong> - {{opinion.updatedAt | date}}</span>
+      </div>
+      <div class="card-body">
+        <p class="card-text">{{opinion.text}}</p>
+        <span *ngIf="isUser">
+          <button type="button" class="btn btn-success" (click)="onEditClicked()">Edit</button>&nbsp;
+          <button type="button" class="btn btn-danger" [disabled]="(opinionsState$ | async).deleteLoading"
+            (click)="onDelete()"><span class="spinner-border spinner-border-sm" aria-hidden="true"
+              *ngIf="(opinionsState$ | async).deleteLoading"></span> Delete</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
