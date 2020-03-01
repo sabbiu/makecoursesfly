@@ -13,13 +13,13 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { OpinionsService } from './opinions.service';
 import { CreateOpinionDto } from './dto/create-opinion.dto';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { UserDoc } from 'src/auth/interfaces/user-document.interface';
+import { GetUser } from '../auth/get-user.decorator';
+import { UserDoc } from '../auth/interfaces/user-document.interface';
 import { GetOpinionsFilterDto } from './dto/get-opinions-filter.dto';
 import { OpinionsPagination } from './interfaces/opinions-pagination.interface';
 import { OpinionDoc } from './interfaces/opinion-document.interface';
 import { UpdateOpinionDto } from './dto/update-opinion.dto';
-import { OptionalAuthGuard } from 'src/auth/optional-auth-guard.service';
+import { OptionalAuthGuard } from '../auth/optional-auth-guard.service';
 
 @Controller('opinions')
 export class OpinionsController {

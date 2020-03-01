@@ -118,7 +118,7 @@ export class OpinionsService {
       if (error.name === 'ValidationError') {
         for (let property in error.errors) {
           if (error.errors.hasOwnProperty(property)) {
-            console.log(error.errors[property], property);
+            // console.log(error.errors[property], property);
             if (
               property === 'post' &&
               error.errors[property].name === 'CastError'
