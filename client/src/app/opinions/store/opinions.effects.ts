@@ -68,7 +68,7 @@ export class OpinionsEffects {
     switchMap(([action, state]) => {
       const params = { ...state.opinionsFilters, ...action.payload };
       return this.opinionsService.getOpinions(params, action.postId).pipe(
-        map(response => new OpinionsActions.GetOpinionSuccess(response)),
+        map(response => new OpinionsActions.GetOpinionsSuccess(response)),
         catchError(error => of(new OpinionsActions.GetOpinionsError()))
       );
     })

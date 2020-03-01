@@ -73,7 +73,7 @@ export class GetOpinionsStart implements Action {
   ) {}
 }
 
-export class GetOpinionSuccess implements Action {
+export class GetOpinionsSuccess implements Action {
   readonly type = GET_OPINIONS_SUCCESS;
   constructor(public payload: PaginationOpinion) {}
 }
@@ -110,7 +110,7 @@ export type OpinionsActionTypes =
   | DeleteOpinionSuccess
   | DeleteOpinionError
   | GetOpinionsStart
-  | GetOpinionSuccess
+  | GetOpinionsSuccess
   | GetOpinionsError
   | UpdateOpinionStart
   | UpdateOpinionSuccess
