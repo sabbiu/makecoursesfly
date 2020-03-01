@@ -4,6 +4,7 @@ import { Pagination } from '../app.interfaces';
 export interface PostCreate {
   title: string;
   url: string;
+  opinion: string;
   tagsOld?: string[];
   tagsNew?: string[];
 }

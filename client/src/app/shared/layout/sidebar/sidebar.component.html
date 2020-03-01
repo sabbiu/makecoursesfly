@@ -40,7 +40,7 @@
               <span *ngIf="menu.badge" class="badge badge-pill" [ngClass]="menu.badge.class">{{menu.badge.text}}</span>
             </a>
             <a *ngIf="menu.type !== 'dropdown' && menu.type !== 'header'" [routerLink]="menu.routerLink"
-              (click)='toggle(menu)'>
+              (click)='sidebarService.onRouteChanged()'>
               <i class="{{menu.icon}}"></i>
               <span>{{menu.title}}</span>
               <span *ngIf="menu.badge" class="badge badge-pill" [ngClass]="menu.badge.class">{{menu.badge.text}}</span>
@@ -49,7 +49,7 @@
               <ul>
                 <li *ngFor="let submenu of menu.submenus" routerLinkActive="active" [routerLinkActiveOptions]="{exact:
                   submenu.routerLink === '/tags'}">
-                  <a [routerLink]="submenu.routerLink"> {{submenu.title}}
+                  <a [routerLink]="submenu.routerLink" (click)="sidebarService.onRouteChanged()"> {{submenu.title}}
                     <span *ngIf="submenu.badge" class="badge badge-pill"
                       [ngClass]="submenu.badge.class">{{submenu.badge.text}}</span>
                   </a>

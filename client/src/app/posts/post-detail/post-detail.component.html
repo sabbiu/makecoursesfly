@@ -19,3 +19,20 @@
     URL is not reachable
   </div>
 </div>
+
+<div *ngIf="!!(authState$ | async).user">
+  <!-- show loading -->
+  <div class="d-flex justify-content-center" *ngIf="opinionLoading; else myopinion">
+    <span class="spinner-border"></span>
+  </div>
+  <ng-template #myopinion>
+    <app-opinion-item *ngIf="!opinionError && !!opinion && !(editMode$ | async)" [opinion]="opinion"
+      [isUser]="!!(authState$ | async).user" [editMode$]="editMode$">
+    </app-opinion-item>
+    <app-opinion-edit *ngIf="((!opinion && opinionError) || (editMode$ | async))" [user]="(authState$ | async).user"
+      [editMode$]="editMode$" [opinion]="opinion">
+    </app-opinion-edit>
+  </ng-template>
+</div>
+
+<app-opinion-list></app-opinion-list>

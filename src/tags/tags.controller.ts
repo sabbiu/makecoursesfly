@@ -15,7 +15,7 @@ import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { GetTagsFilterDto } from './dto/get-tags-filter.dto';
 import { TagsPagination } from './interfaces/tags-pagination.interface';
-import { TagDoc } from './interfaces/tag-document.interfact';
+import { TagDoc } from './interfaces/tag-document.interface';
 
 @Controller('tags')
 export class TagsController {

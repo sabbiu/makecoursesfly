@@ -1,7 +1,7 @@
 import { IsOptional, IsNotEmpty, IsNumber, IsIn } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class GetTagsFilterDto {
+export class GetOpinionsFilterDto {
   @IsOptional()
   @IsNotEmpty()
   search: string;
@@ -17,8 +17,8 @@ export class GetTagsFilterDto {
   limit: number = 20;
 
   @IsOptional()
-  @IsIn(['title', 'createdAt', 'postsCount'])
-  sortby: string = 'postsCount';
+  @IsIn(['text', 'updatedAt'])
+  sortby: string = 'updatedAt';
 
   @IsOptional()
   @Transform(Number)

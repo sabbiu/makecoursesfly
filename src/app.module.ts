@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TagsModule } from './tags/tags.module';
 import { PostsModule } from './posts/posts.module';
+import { OpinionsModule } from './opinions/opinions.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PostsModule } from './posts/posts.module';
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client', 'dist', 'client'),
@@ -24,6 +26,7 @@ import { PostsModule } from './posts/posts.module';
     UsersModule,
     TagsModule,
     PostsModule,
+    OpinionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

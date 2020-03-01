@@ -31,7 +31,7 @@ interface Menu {
 export class SidebarService {
   user: User;
   storeSub: Subscription;
-  toggled = false;
+  toggled = window.innerWidth <= 768;
   menus$ = new BehaviorSubject<Menu[]>([]);
   submenus: SubMenu[] = [{ title: 'See All', routerLink: '/tags' }];
 
@@ -73,6 +73,12 @@ export class SidebarService {
 
   setSidebarState(state: boolean) {
     this.toggled = state;
+  }
+
+  onRouteChanged() {
+    if (window.innerWidth <= 768) {
+      this.toggle();
+    }
   }
 
   getMenuList() {

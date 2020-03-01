@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { Actions } from '@ngrx/effects';
 import * as fromApp from '../../core/store/app.reducer';
 import * as fromTags from '../../tags/store/tags.reducer';
 import * as fromPosts from '../store/posts.reducer';
@@ -22,6 +21,14 @@ export class CreatePostComponent implements OnInit {
     title: ['', Validators.required],
     url: ['', Validators.required],
     tags: [[], [Validators.required, Validators.minLength(3)]],
+    opinion: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(20),
+        Validators.maxLength(500),
+      ],
+    ],
   });
   tagsState$: Observable<fromTags.TagsState>;
   postsState$: Observable<fromPosts.PostsState>;
@@ -30,8 +37,7 @@ export class CreatePostComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private store: Store<fromApp.AppState>,
-    public fhService: FormHelperService,
-    private actions$: Actions
+    public fhService: FormHelperService
   ) {}
 
   ngOnInit() {
@@ -63,11 +69,8 @@ export class CreatePostComponent implements OnInit {
   }
 
   onSubmit() {
-    const { title, url, tags } = this.form.value;
-    const body: PostCreate = {
-      title,
-      url,
-    };
+    const { title, url, tags, opinion } = this.form.value;
+    const body: PostCreate = { title, url, opinion };
     const tagsOld = tags
       .filter((tag: Tag) => !!tag._id)
       .map((tag: Tag) => tag._id);
@@ -89,5 +92,8 @@ export class CreatePostComponent implements OnInit {
   }
   get tags() {
     return this.form.get('tags');
+  }
+  get opinion() {
+    return this.form.get('opinion');
   }
 }

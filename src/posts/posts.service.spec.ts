@@ -10,6 +10,7 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { OpinionsService } from '../opinions/opinions.service';
 import { CreatePostDto } from './dto/create-post.dto';
 
 const mockPost = {
@@ -23,6 +24,7 @@ const mockUser = {
 const mockCreatePostDto: CreatePostDto = {
   url: 'example.com',
   title: 'test',
+  opinion: 'sudp dude',
   tagsNew: ['test'],
   tagsOld: [],
 };
@@ -62,6 +64,12 @@ describe('PostsService', () => {
           useValue: {
             find: jest.fn().mockResolvedValue([mockTag]),
             insertMany: jest.fn().mockResolvedValue([mockTag]),
+          },
+        },
+        {
+          provide: OpinionsService,
+          useValue: {
+            createOpinion: jest.fn().mockResolvedValue(true),
           },
         },
       ],
