@@ -1,7 +1,6 @@
-import { UsersController } from './users.controller';
 import { TestingModule, Test } from '@nestjs/testing';
-import { PassportModule } from '@nestjs/passport';
 import { UsersService } from './users.service';
+import { AuthService } from '../auth/auth.service';
 
 const mockUser = {
   _id: 'uuid',
@@ -11,17 +10,16 @@ const mockUser = {
   email: 'test@test.com',
 };
 
-describe('UsersController', () => {
-  let controller: UsersController;
+describe(`UsersService`, () => {
   let service: UsersService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
-      controllers: [UsersController],
       providers: [
+        UsersService,
         {
-          provide: UsersService,
+          provide: AuthService,
           useValue: {
             getUsers: jest
               .fn()
@@ -34,30 +32,23 @@ describe('UsersController', () => {
       ],
     }).compile();
 
-    controller = module.get<UsersController>(UsersController);
     service = module.get<UsersService>(UsersService);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
-  describe('me', () => {
-    it('returns user', () => {
-      const result = controller.me(mockUser as any);
-      expect(result).toEqual(mockUser);
-    });
+    expect(service).toBeDefined();
   });
 
   describe('getUser', () => {
     it('should return a user', () => {
-      expect(controller.getUser('test')).resolves.toEqual(mockUser);
+      expect(service.getUser('test')).resolves.toEqual(mockUser);
     });
   });
 
   describe('getUsers', () => {
     it('should return list of users', () => {
-      expect(controller.getUsers({} as any)).resolves.toEqual([mockUser]);
+      expect(service.getUsers({} as any)).resolves.toEqual([mockUser]);
     });
   });
 });
