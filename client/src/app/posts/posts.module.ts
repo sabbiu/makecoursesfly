@@ -27,6 +27,6 @@ import { OpinionsModule } from '../opinions/opinions.module';
     InfiniteScrollModule,
     OpinionsModule,
   ],
-  exports: [PostsRoutingModule, PostListComponent],
+  exports: [PostsRoutingModule, PostListComponent, PostItemComponent],
 })
 export class PostsModule {}

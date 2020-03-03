@@ -84,7 +84,10 @@ export function postsReducer(
         ...state,
         posts: [...state.posts, ...action.payload.data],
         postsLoading: false,
-        postsEnd: action.payload.data.length ? state.postsEnd : true,
+        postsEnd:
+          action.payload.data.length >= action.payload.limit
+            ? state.postsEnd
+            : true,
         postsCount: action.payload.count,
       };
 

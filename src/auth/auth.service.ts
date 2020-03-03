@@ -3,6 +3,7 @@ import {
   ConflictException,
   InternalServerErrorException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -14,6 +15,8 @@ import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { Token } from './interfaces/token.interface';
+import { GetUsersFilterDto } from '../users/dto/get-users-filter.dto';
+import { UsersPagination } from '../users/interfaces/users-pagination.interface';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +25,55 @@ export class AuthService {
     private readonly userModel: Model<UserDoc>,
     private readonly jwtService: JwtService
   ) {}
+
+  async getUser(username: string): Promise<UserDoc> {
+    const users = await this.userModel.find(
+      { username },
+      {
+        name: 1,
+        createdAt: 1,
+        _id: 1,
+        username: 1,
+        email: 1,
+        photo: 1,
+      }
+    );
+    if (users && users.length) {
+      return users[0];
+    } else {
+      throw new NotFoundException();
+    }
+  }
+
+  async getUsers(filterDto: GetUsersFilterDto): Promise<UsersPagination> {
+    const { search, limit, offset, sortby, order } = filterDto;
+
+    const aggregation = [] as any;
+
+    const query = {} as any;
+    if (search) {
+      query.$text = { $search: search };
+      aggregation.push({ $match: query });
+    }
+    aggregation.push({
+      $project: {
+        name: 1,
+        createdAt: 1,
+        _id: 1,
+        username: 1,
+        email: 1,
+        photo: 1,
+      },
+    });
+    aggregation.push({ $sort: { [sortby]: order } });
+    aggregation.push({ $skip: offset });
+    aggregation.push({ $limit: limit });
+
+    const data = await this.userModel.aggregate(aggregation);
+    const count = await this.userModel.countDocuments(query);
+
+    return { data, offset, limit, count };
+  }
 
   async register(authRegisterDto: AuthRegisterDto): Promise<Token> {
     const { name, username, password, photo, email } = authRegisterDto;

@@ -31,6 +31,8 @@ export const UserSchema = new Schema(
   { timestamps: true }
 );
 
+UserSchema.index({ username: 'text' });
+
 UserSchema.methods.validatePassword = async function(password: string) {
   const hash = await bcrypt.hash(password, this.salt);
   return hash === this.password;

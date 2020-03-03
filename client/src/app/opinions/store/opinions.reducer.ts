@@ -1,6 +1,7 @@
 import * as OpinionsActions from './opinions.actions';
 import { Opinion } from '../opinion.model';
 import { GetOpinionsFilter } from '../opinions.interfaces';
+import { GetFeedFilter, Feed } from 'src/app/feed/feed.interfaces';
 
 export interface OpinionsState {
   createLoading: boolean;
@@ -15,6 +16,11 @@ export interface OpinionsState {
   opinionsCount: number;
   updateLoading: boolean;
   updateError: boolean;
+  feedFilters: GetFeedFilter;
+  feedLoading: boolean;
+  feed: Feed[];
+  feedEnd: boolean;
+  feedCount: number;
 }
 
 const initialState: OpinionsState = {
@@ -33,6 +39,14 @@ const initialState: OpinionsState = {
   opinionsCount: null,
   updateLoading: false,
   updateError: false,
+  feedFilters: {
+    offset: 2,
+    limit: 5,
+  },
+  feedLoading: false,
+  feed: [],
+  feedEnd: false,
+  feedCount: null,
 };
 
 export function opinionsReducer(
@@ -63,7 +77,7 @@ export function opinionsReducer(
     case OpinionsActions.DELETE_OPINION_ERROR:
       return { ...state, deleteLoading: false };
 
-    case OpinionsActions.GET_OPINIONS_START:
+    case OpinionsActions.GET_POST_OPINIONS_START:
       return {
         ...state,
         opinionsFilters: {
@@ -77,16 +91,19 @@ export function opinionsReducer(
         opinionsLoading: true,
       };
 
-    case OpinionsActions.GET_OPINIONS_SUCCESS:
+    case OpinionsActions.GET_POST_OPINIONS_SUCCESS:
       return {
         ...state,
         opinions: [...state.opinions, ...action.payload.data],
         opinionsLoading: false,
-        opinionsEnd: action.payload.data.length ? state.opinionsEnd : true,
+        opinionsEnd:
+          action.payload.data.length >= action.payload.limit
+            ? state.opinionsEnd
+            : true,
         opinionsCount: action.payload.count,
       };
 
-    case OpinionsActions.GET_OPINIONS_ERROR:
+    case OpinionsActions.GET_POST_OPINIONS_ERROR:
       return { ...state, opinionsLoading: false };
 
     case OpinionsActions.UPDATE_OPINION_START:
@@ -95,6 +112,33 @@ export function opinionsReducer(
     case OpinionsActions.UPDATE_OPINION_SUCCESS:
     case OpinionsActions.UPDATE_OPINION_ERROR:
       return { ...state, updateLoading: false };
+
+    case OpinionsActions.GET_OPINIONS_START:
+      return {
+        ...state,
+        feedFilters: {
+          ...(action.isFirst ? initialState.feedFilters : state.feedFilters),
+          ...action.payload,
+        },
+        feed: action.isFirst ? [] : state.feed,
+        feedEnd: action.isFirst ? false : state.feedEnd,
+        feedLoading: true,
+      };
+
+    case OpinionsActions.GET_OPINIONS_SUCCESS:
+      return {
+        ...state,
+        feed: [...state.feed, ...action.payload.data],
+        feedLoading: false,
+        feedEnd:
+          action.payload.data.length >= action.payload.limit
+            ? state.feedEnd
+            : true,
+        feedCount: action.payload.count,
+      };
+
+    case OpinionsActions.GET_OPINIONS_ERROR:
+      return { ...state, feedLoading: false };
 
     default:
       return state;

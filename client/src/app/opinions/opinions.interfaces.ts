@@ -13,6 +13,7 @@ export interface GetOpinionsFilter {
   offset?: number;
   limit?: number;
   search?: string;
+  createdBy?: string;
 }
 
 export interface OpinionUpdate {

@@ -137,9 +137,9 @@ describe('OpinionsEffects', () => {
 
   describe(`getOpinionsForPost$`, () => {
     it(`should return paginated opinions, on success`, () => {
-      const action = new OpinionsActions.GetOpinionsStart({}, 'post id');
+      const action = new OpinionsActions.GetPostOpinionsStart({}, 'post id');
       const result = { data: [mockOpinion], count: 1 } as PaginationOpinion;
-      const completion = new OpinionsActions.GetOpinionsSuccess(result);
+      const completion = new OpinionsActions.GetPostOpinionsSuccess(result);
 
       actions$ = hot('-a', { a: action });
       const response = cold('-b|', { b: result });
@@ -150,9 +150,9 @@ describe('OpinionsEffects', () => {
     });
 
     it(`should return fail action, on failure`, () => {
-      const action = new OpinionsActions.GetOpinionsStart({}, 'post id');
+      const action = new OpinionsActions.GetPostOpinionsStart({}, 'post id');
       const error = 'error';
-      const completion = new OpinionsActions.GetOpinionsError();
+      const completion = new OpinionsActions.GetPostOpinionsError();
 
       actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);

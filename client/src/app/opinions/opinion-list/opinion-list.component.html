@@ -13,4 +13,4 @@
 <div class="d-flex justify-content-center" *ngIf="loading">
   <span class="spinner-border"></span>
 </div>
-<div class="d-flex justify-content-center py-3" *ngIf="opinionsEnd">No more data</div>
+<div class="d-flex justify-content-center py-3" *ngIf="opinionsEnd && !loading">No more data</div>
