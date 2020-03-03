@@ -9,6 +9,7 @@ import { Actions } from '@ngrx/effects';
 import * as OpinionsActions from './opinions.actions';
 import { hot, cold } from 'jasmine-marbles';
 import { PaginationOpinion } from '../opinions.interfaces';
+import { PaginationFeed } from '../../feed/feed.interfaces';
 
 const mockOpinion = { _id: 'opinion uuid', text: 'sup dude' } as any;
 
@@ -16,6 +17,7 @@ class MockOpinionService {
   createOpinion = jasmine.createSpy('createOpinion');
   getMyOpinion = jasmine.createSpy('getMyOpinion');
   deleteOpinion = jasmine.createSpy('deleteOpinion');
+  getPostOpinions = jasmine.createSpy('getPostOpinions');
   getOpinions = jasmine.createSpy('getOpinions');
   updateOpinion = jasmine.createSpy('updateOpinion');
 }
@@ -144,7 +146,7 @@ describe('OpinionsEffects', () => {
       actions$ = hot('-a', { a: action });
       const response = cold('-b|', { b: result });
       const expected = cold('--c', { c: completion });
-      opinionsService.getOpinions.and.returnValue(response);
+      opinionsService.getPostOpinions.and.returnValue(response);
 
       expect(effects.getOpinionsForPost$).toBeObservable(expected);
     });
@@ -157,9 +159,37 @@ describe('OpinionsEffects', () => {
       actions$ = hot('-a', { a: action });
       const response = cold('-#|', {}, error);
       const expected = cold('--c', { c: completion });
-      opinionsService.getOpinions.and.returnValue(response);
+      opinionsService.getPostOpinions.and.returnValue(response);
 
       expect(effects.getOpinionsForPost$).toBeObservable(expected);
+    });
+  });
+
+  describe(`getOpinions$`, () => {
+    it(`should return paginated opinions, on success`, () => {
+      const action = new OpinionsActions.GetOpinionsStart({});
+      const result = { data: [mockOpinion], count: 1 } as PaginationFeed;
+      const completion = new OpinionsActions.GetOpinionsSuccess(result);
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-b|', { b: result });
+      const expected = cold('--c', { c: completion });
+      opinionsService.getOpinions.and.returnValue(response);
+
+      expect(effects.getOpinions$).toBeObservable(expected);
+    });
+
+    it(`should return fail action, on failure`, () => {
+      const action = new OpinionsActions.GetOpinionsStart({});
+      const error = 'error';
+      const completion = new OpinionsActions.GetOpinionsError();
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-#|', {}, error);
+      const expected = cold('--c', { c: completion });
+      opinionsService.getOpinions.and.returnValue(response);
+
+      expect(effects.getOpinions$).toBeObservable(expected);
     });
   });
 
