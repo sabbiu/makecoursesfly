@@ -55,6 +55,36 @@ describe('OpinionsService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('getOpinions', () => {
+    it(`returns list of opinions along with offset, limit and count`, async () => {
+      const params = {
+        search: 'asdf',
+        limit: 10,
+        offset: 0,
+      } as any;
+      jest.spyOn(model, 'countDocuments').mockResolvedValue(0);
+      model.find = jest.fn().mockImplementation(() => ({
+        sort: jest.fn(() => ({
+          skip: jest.fn(() => ({
+            limit: jest.fn(() => ({
+              populate: jest.fn().mockResolvedValue([]),
+            })),
+          })),
+        })),
+      }));
+
+      await expect(service.getOpinions(params)).resolves.not.toThrow();
+
+      const result = await service.getOpinions(params);
+      expect(result).toEqual({
+        data: [],
+        offset: params.offset,
+        limit: params.limit,
+        count: 0,
+      });
+    });
+  });
+
   describe('getPostOpinions', () => {
     it(`returns list of opinions along with offset, limit and count`, async () => {
       const params = {

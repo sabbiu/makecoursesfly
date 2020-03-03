@@ -25,6 +25,14 @@ import { OptionalAuthGuard } from '../auth/optional-auth-guard.service';
 export class OpinionsController {
   constructor(private opinionsService: OpinionsService) {}
 
+  @Get('')
+  getOpinions(
+    @Query(new ValidationPipe({ transform: true }))
+    filterDto: GetOpinionsFilterDto
+  ): Promise<OpinionsPagination> {
+    return this.opinionsService.getOpinions(filterDto);
+  }
+
   @Post('post/:id')
   @UseGuards(AuthGuard())
   createOpinion(

@@ -7,6 +7,7 @@ import {
 } from './opinions.interfaces';
 import { Observable } from 'rxjs';
 import { Opinion } from './opinion.model';
+import { PaginationFeed } from '../feed/feed.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class OpinionsService {
@@ -28,11 +29,15 @@ export class OpinionsService {
     return this.http.delete<void>(`${this.opinionUrl}/${id}`);
   }
 
-  getOpinions(params: any, postId: string): Observable<PaginationOpinion> {
+  getPostOpinions(params: any, postId: string): Observable<PaginationOpinion> {
     return this.http.get<PaginationOpinion>(
       `${this.opinionUrl}/post/${postId}`,
       { params }
     );
+  }
+
+  getOpinions(params: any): Observable<PaginationFeed> {
+    return this.http.get<PaginationFeed>(this.opinionUrl, { params });
   }
 
   updateOpinion(body: OpinionUpdate, opinionId: string): Observable<string> {

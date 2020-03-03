@@ -37,7 +37,7 @@ export class OpinionListComponent implements OnInit, OnDestroy {
         this.postId = params.id;
 
         this.store.dispatch(
-          new OpinionsActions.GetOpinionsStart(
+          new OpinionsActions.GetPostOpinionsStart(
             { offset: this.offset, limit: this.limit },
             this.postId,
             true
@@ -60,7 +60,7 @@ export class OpinionListComponent implements OnInit, OnDestroy {
     if (!this.loading && !this.opinionsEnd) {
       this.offset += this.limit;
       this.store.dispatch(
-        new OpinionsActions.GetOpinionsStart(
+        new OpinionsActions.GetPostOpinionsStart(
           { offset: this.offset, limit: this.limit },
           this.postId
         )

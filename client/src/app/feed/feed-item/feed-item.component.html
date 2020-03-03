@@ -1,0 +1,10 @@
+<small class="d-flex w-100 justify-content-between"><span><i class="fa fa-comment"></i>&nbsp; <a
+      [routerLink]="['/people', feed.createdBy.username]" routerLinkActive="router-link-active"
+      class="text-dark"><strong>{{feed.createdBy.name}}</strong></a> shared an opinion
+  </span><span>{{feed.updatedAt | date}}</span></small>
+<p class="my-2">{{feed.text}}</p>
+<div>
+  <a app-post-item *ngIf="!!feed.post" [post]="feed.post" class="list-group-item-action list-group-item"
+    [routerLink]="['/posts', feed.post._id]" routerLinkActive="router-link-active">
+  </a>
+</div>

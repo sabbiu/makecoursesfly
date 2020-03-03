@@ -89,16 +89,18 @@ export class SidebarService {
         type: 'simple',
         routerLink: '/',
       },
+      // {
+      //   title: 'Profile',
+      //   icon: 'fa fa-user-circle',
+      //   type: 'simple',
+      //   protected: true,
+      //   routerLink: '/profile',
+      // },
       {
-        title: 'Profile',
-        icon: 'fa fa-user-circle',
+        title: 'Posts',
+        icon: 'fa fa-file',
         type: 'simple',
-        protected: true,
-        routerLink: '/profile',
-        badge: {
-          text: 'To Do',
-          class: 'badge-warning',
-        },
+        routerLink: '/posts',
       },
       {
         title: 'Tags',
@@ -111,10 +113,6 @@ export class SidebarService {
         icon: 'fa fa-users',
         type: 'simple',
         routerLink: '/people',
-        badge: {
-          text: 'To Do',
-          class: 'badge-warning',
-        },
       },
       {
         title: 'Action',

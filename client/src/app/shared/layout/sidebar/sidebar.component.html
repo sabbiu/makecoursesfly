@@ -2,7 +2,8 @@
   <div class="sidebar-content">
     <perfect-scrollbar>
 
-      <div class="sidebar-profile" *ngIf="sidebarService.user">
+      <a class="sidebar-profile" *ngIf="sidebarService.user" [routerLink]="['/people', sidebarService.user.username]"
+        routerLinkActive="router-link-active">
         <div class="user-pic">
           <img class="img-responsive img-rounded" [src]="sidebarService.user.photo" alt="User picture">
         </div>
@@ -15,7 +16,7 @@
             <span>{{sidebarService.user.email}}</span>
           </span>
         </div>
-      </div>
+      </a>
       <div class="sidebar-search">
         <div>
           <div class="input-group">

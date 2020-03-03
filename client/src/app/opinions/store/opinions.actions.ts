@@ -6,6 +6,7 @@ import {
   OpinionUpdate,
 } from '../opinions.interfaces';
 import { Opinion } from '../opinion.model';
+import { PaginationFeed } from '../../feed/feed.interfaces';
 
 export const CREATE_OPINION_START = '[Opinion] Create opinion start';
 export const CREATE_OPINION_SUCCESS = '[Opinion] Create opinion success';
@@ -16,12 +17,16 @@ export const GET_MY_OPINION_ERROR = '[Opinion] Get my opinion error';
 export const DELETE_OPINION_START = '[Opinion] Delete opinion start';
 export const DELETE_OPINION_SUCCESS = '[Opinion] Delete opinion success';
 export const DELETE_OPINION_ERROR = '[Opinion] Delete opinion error';
-export const GET_OPINIONS_START = '[Opinion] Fetch Opinions Start';
-export const GET_OPINIONS_SUCCESS = '[Opinion] Fetch Opinions Success';
-export const GET_OPINIONS_ERROR = '[Opinion] Fetch Opinions Error';
+export const GET_POST_OPINIONS_START = '[Opinion] Fetch Post Opinions Start';
+export const GET_POST_OPINIONS_SUCCESS =
+  '[Opinion] Fetch Post Opinions Success';
+export const GET_POST_OPINIONS_ERROR = '[Opinion] Fetch Post Opinions Error';
 export const UPDATE_OPINION_START = '[Opinion] Update Opinion Start';
 export const UPDATE_OPINION_SUCCESS = '[Opinion] Update Opinion Success';
 export const UPDATE_OPINION_ERROR = '[Opinion] Update Opinion Error';
+export const GET_OPINIONS_START = '[Opinion] Fetch Opinions Start';
+export const GET_OPINIONS_SUCCESS = '[Opinion] Fetch Opinions Success';
+export const GET_OPINIONS_ERROR = '[Opinion] Fetch Opinions Error';
 
 export class CreateOpinionStart implements Action {
   readonly type = CREATE_OPINION_START;
@@ -64,8 +69,8 @@ export class DeleteOpinionError implements Action {
   readonly type = DELETE_OPINION_ERROR;
 }
 
-export class GetOpinionsStart implements Action {
-  readonly type = GET_OPINIONS_START;
+export class GetPostOpinionsStart implements Action {
+  readonly type = GET_POST_OPINIONS_START;
   constructor(
     public payload: GetOpinionsFilter,
     public postId: string,
@@ -73,13 +78,13 @@ export class GetOpinionsStart implements Action {
   ) {}
 }
 
-export class GetOpinionsSuccess implements Action {
-  readonly type = GET_OPINIONS_SUCCESS;
+export class GetPostOpinionsSuccess implements Action {
+  readonly type = GET_POST_OPINIONS_SUCCESS;
   constructor(public payload: PaginationOpinion) {}
 }
 
-export class GetOpinionsError implements Action {
-  readonly type = GET_OPINIONS_ERROR;
+export class GetPostOpinionsError implements Action {
+  readonly type = GET_POST_OPINIONS_ERROR;
 }
 
 export class UpdateOpinionStart implements Action {
@@ -99,6 +104,23 @@ export class UpdateOpinionError implements Action {
   readonly type = UPDATE_OPINION_ERROR;
 }
 
+export class GetOpinionsStart implements Action {
+  readonly type = GET_OPINIONS_START;
+  constructor(
+    public payload: GetOpinionsFilter,
+    public isFirst: boolean = false
+  ) {}
+}
+
+export class GetOpinionsSuccess implements Action {
+  readonly type = GET_OPINIONS_SUCCESS;
+  constructor(public payload: PaginationFeed) {}
+}
+
+export class GetOpinionsError implements Action {
+  readonly type = GET_OPINIONS_ERROR;
+}
+
 export type OpinionsActionTypes =
   | CreateOpinionStart
   | CreateOpinionSuccess
@@ -109,9 +131,12 @@ export type OpinionsActionTypes =
   | DeleteOpinionStart
   | DeleteOpinionSuccess
   | DeleteOpinionError
-  | GetOpinionsStart
-  | GetOpinionsSuccess
-  | GetOpinionsError
+  | GetPostOpinionsStart
+  | GetPostOpinionsSuccess
+  | GetPostOpinionsError
   | UpdateOpinionStart
   | UpdateOpinionSuccess
-  | UpdateOpinionError;
+  | UpdateOpinionError
+  | GetOpinionsStart
+  | GetOpinionsSuccess
+  | GetOpinionsError;

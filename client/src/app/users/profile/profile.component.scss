@@ -1,0 +1,29 @@
+.followers {
+  > div {
+    cursor: pointer;
+
+    &:hover {
+      color: #980303;
+    }
+
+    h5 {
+      display: inline;
+    }
+  }
+}
+
+.title {
+  color: #980303;
+}
+
+.avatars {
+  img {
+    width: 73px;
+  }
+}
+
+.analytics {
+  h3 {
+    display: inline;
+  }
+}

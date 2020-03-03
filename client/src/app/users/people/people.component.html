@@ -1,0 +1,27 @@
+<div class="analytics mb-2" *ngIf="!loading">
+  <h3>
+    {{usersCount}}
+  </h3><strong>{{'total people' | uppercase}}</strong>
+</div>
+
+<div class="list-group">
+  <a *ngFor="let user of users" [routerLink]="['/people', user.username]"
+    class="list-group-item list-group-item-action p-0" infinite-scroll [infiniteScrollDistance]="scrollDistance"
+    [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()">
+    <div class="row no-gutters">
+      <div class="col-auto p-1">
+        <img [src]="user.photo" class="img-fluid avatar" [alt]="user.name">
+      </div>
+      <div class="col p-2">
+        <div class="card-block px-2">
+          <h4 class="card-title">{{user.name}}</h4>
+          <p class="card-text">@{{user.username}}</p>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+<div class="d-flex justify-content-center" *ngIf="loading">
+  <span class="spinner-border"></span>
+</div>
+<div class="d-flex justify-content-center py-3" *ngIf="usersEnd && !loading">No more data</div>

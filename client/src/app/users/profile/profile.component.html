@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-12">
+    <div class="mb-3 bg-transparent">
+      <!-- <a class="position-absolute ml-3 mt-3 text-white" href="setting.html" data-toggle="tooltip"
+            data-placement="bottom" title="" data-original-title="Edit cover images"><i class="fas fa-cog"></i></a> -->
+      <div class="row">
+        <div class="col-md-6 ml-auto mr-auto">
+          <div class="px-3 pt-3 mt-4 rounded text-center" *ngIf="!!user">
+            <div class="avatars pb-2">
+              <span>
+                <img [src]="user.photo" [alt]="user.name" class="avatar-lg rounded-circle img-fluid shadow">
+              </span>
+            </div>
+            <div>
+              <div class="mb-3">
+                <h3 class="text-dark">{{user.name}}</h3>
+                <h5 class="title">@{{user.username}}</h5>
+                <div class="text-dark">{{user.email}}</div>
+              </div>
+              <!-- 
+              <div class="followers d-flex justify-content-center">
+                <div class="p-2">
+                  <h5>300</h5> {{'following' | uppercase}}
+                </div>
+                <div class="p-2">
+                  <h5>200</h5> {{'followers' | uppercase}}
+                </div>
+              </div> -->
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pb-3">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="#">Opinions</a>
+    </li>
+    <!-- <li class="nav-item">
+      <a class="nav-link" href="#">Edit Profile</a>
+    </li> -->
+  </ul>
+</div>
+
+<app-feed *ngIf="startFetchingFeed" from="profile"></app-feed>

@@ -25,6 +25,31 @@ export class OpinionsService {
     private postsService: PostsService
   ) {}
 
+  async getOpinions(
+    filterDto: GetOpinionsFilterDto
+  ): Promise<OpinionsPagination> {
+    const { search, sortby, limit, offset, order, createdBy } = filterDto;
+
+    try {
+      const query = {} as any;
+      if (search) query.$text = { $search: search };
+      if (createdBy) query.createdBy = createdBy;
+
+      const data = await this.opinionModel
+        .find(query)
+        .sort({ [sortby]: order })
+        .skip(offset)
+        .limit(limit)
+        .populate('post');
+
+      const count = await this.opinionModel.countDocuments(query);
+
+      return { data, count, limit, offset };
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
   async getPostOpinions(
     filterDto: GetOpinionsFilterDto,
     postId: string,

@@ -70,7 +70,10 @@ export function tagsReducer(
         ...state,
         tags: [...state.tags, ...action.payload.data],
         tagsLoading: false,
-        tagsEnd: action.payload.data.length ? state.tagsEnd : true,
+        tagsEnd:
+          action.payload.data.length >= action.payload.limit
+            ? state.tagsEnd
+            : true,
         tagsCount: action.payload.count,
       };
 

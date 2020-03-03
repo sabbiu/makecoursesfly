@@ -24,6 +24,9 @@ describe('OpinionsController', () => {
             getPostOpinions: jest
               .fn()
               .mockImplementation(() => Promise.resolve([mockOpinion])),
+            getOpinions: jest
+              .fn()
+              .mockImplementation(() => Promise.resolve([mockOpinion])),
             createOpinion: jest
               .fn()
               .mockImplementation(() => Promise.resolve('opinion uuid')),
@@ -93,6 +96,14 @@ describe('OpinionsController', () => {
         'post id',
         mockUser
       );
+    });
+  });
+
+  describe('getOpinions', () => {
+    const filterDto = { search: 'asdf' } as any;
+    it(`should call opinionsService's getOpinions with filters`, () => {
+      controller.getOpinions(filterDto);
+      expect(service.getOpinions).toBeCalledWith(filterDto);
     });
   });
 

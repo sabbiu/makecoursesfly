@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -10,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { TagsModule } from './tags/tags.module';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { UsersModule } from './users/users.module';
+import { FeedModule } from './feed/feed.module';
 
 @NgModule({
   declarations: [AppComponent, PageNotFoundComponent],
@@ -17,11 +20,14 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    InfiniteScrollModule,
     SharedModule,
     CoreModule,
     AuthModule,
     PostsModule,
     TagsModule,
+    UsersModule,
+    FeedModule,
   ],
   bootstrap: [AppComponent],
 })

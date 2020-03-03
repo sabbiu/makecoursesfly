@@ -6,11 +6,13 @@ import {
   ConflictException,
   InternalServerErrorException,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDoc } from './interfaces/user-document.interface';
 import { AuthRegisterDto } from './dto/auth-register.dto';
 import { AuthLoginDto } from './dto/auth-login.dto';
+import { GetUsersFilterDto } from 'src/users/dto/get-users-filter.dto';
 
 const mockManualUser = {
   name: 'Test',
@@ -63,6 +65,9 @@ describe('AuthService', () => {
           useValue: {
             create: jest.fn(),
             findOne: jest.fn(),
+            find: jest.fn(),
+            aggregate: jest.fn(),
+            countDocuments: jest.fn(),
           },
         },
         {
@@ -84,6 +89,43 @@ describe('AuthService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('getUser', () => {
+    it('successfully returns tag, on found', async () => {
+      jest.spyOn(model, 'find').mockResolvedValue([mockManualUser as any]);
+      await expect(service.getUser('username')).resolves.not.toThrow();
+    });
+
+    it('throws NotFoundException, on error', async () => {
+      jest.spyOn(model, 'find').mockResolvedValue([]);
+      await expect(service.getUser('username')).rejects.toThrow(
+        NotFoundException
+      );
+    });
+  });
+
+  describe('getUsers', () => {
+    it('returns list of tags along with offset, limit and count', async () => {
+      const params = {
+        search: 'text',
+        limit: 10,
+        offset: 0,
+      } as GetUsersFilterDto;
+      jest
+        .spyOn(model, 'aggregate')
+        .mockResolvedValue([mockManualUser, mockManualUser]);
+      jest.spyOn(model, 'countDocuments').mockResolvedValue(2);
+
+      await expect(service.getUsers(params)).resolves.not.toThrow();
+      const result = await service.getUsers(params);
+      expect(result).toEqual({
+        data: [mockManualUser, mockManualUser],
+        offset: params.offset,
+        limit: params.limit,
+        count: 2,
+      });
+    });
   });
 
   describe('register', () => {

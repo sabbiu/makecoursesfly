@@ -9,6 +9,7 @@ import { Actions } from '@ngrx/effects';
 import * as OpinionsActions from './opinions.actions';
 import { hot, cold } from 'jasmine-marbles';
 import { PaginationOpinion } from '../opinions.interfaces';
+import { PaginationFeed } from '../../feed/feed.interfaces';
 
 const mockOpinion = { _id: 'opinion uuid', text: 'sup dude' } as any;
 
@@ -16,6 +17,7 @@ class MockOpinionService {
   createOpinion = jasmine.createSpy('createOpinion');
   getMyOpinion = jasmine.createSpy('getMyOpinion');
   deleteOpinion = jasmine.createSpy('deleteOpinion');
+  getPostOpinions = jasmine.createSpy('getPostOpinions');
   getOpinions = jasmine.createSpy('getOpinions');
   updateOpinion = jasmine.createSpy('updateOpinion');
 }
@@ -137,8 +139,36 @@ describe('OpinionsEffects', () => {
 
   describe(`getOpinionsForPost$`, () => {
     it(`should return paginated opinions, on success`, () => {
-      const action = new OpinionsActions.GetOpinionsStart({}, 'post id');
+      const action = new OpinionsActions.GetPostOpinionsStart({}, 'post id');
       const result = { data: [mockOpinion], count: 1 } as PaginationOpinion;
+      const completion = new OpinionsActions.GetPostOpinionsSuccess(result);
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-b|', { b: result });
+      const expected = cold('--c', { c: completion });
+      opinionsService.getPostOpinions.and.returnValue(response);
+
+      expect(effects.getOpinionsForPost$).toBeObservable(expected);
+    });
+
+    it(`should return fail action, on failure`, () => {
+      const action = new OpinionsActions.GetPostOpinionsStart({}, 'post id');
+      const error = 'error';
+      const completion = new OpinionsActions.GetPostOpinionsError();
+
+      actions$ = hot('-a', { a: action });
+      const response = cold('-#|', {}, error);
+      const expected = cold('--c', { c: completion });
+      opinionsService.getPostOpinions.and.returnValue(response);
+
+      expect(effects.getOpinionsForPost$).toBeObservable(expected);
+    });
+  });
+
+  describe(`getOpinions$`, () => {
+    it(`should return paginated opinions, on success`, () => {
+      const action = new OpinionsActions.GetOpinionsStart({});
+      const result = { data: [mockOpinion], count: 1 } as PaginationFeed;
       const completion = new OpinionsActions.GetOpinionsSuccess(result);
 
       actions$ = hot('-a', { a: action });
@@ -146,11 +176,11 @@ describe('OpinionsEffects', () => {
       const expected = cold('--c', { c: completion });
       opinionsService.getOpinions.and.returnValue(response);
 
-      expect(effects.getOpinionsForPost$).toBeObservable(expected);
+      expect(effects.getOpinions$).toBeObservable(expected);
     });
 
     it(`should return fail action, on failure`, () => {
-      const action = new OpinionsActions.GetOpinionsStart({}, 'post id');
+      const action = new OpinionsActions.GetOpinionsStart({});
       const error = 'error';
       const completion = new OpinionsActions.GetOpinionsError();
 
@@ -159,7 +189,7 @@ describe('OpinionsEffects', () => {
       const expected = cold('--c', { c: completion });
       opinionsService.getOpinions.and.returnValue(response);
 
-      expect(effects.getOpinionsForPost$).toBeObservable(expected);
+      expect(effects.getOpinions$).toBeObservable(expected);
     });
   });
 
