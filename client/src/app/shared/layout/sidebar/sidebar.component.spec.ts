@@ -1,11 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Router, Data, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-import { Router, Data } from '@angular/router';
 import { of } from 'rxjs';
 
 import { SidebarComponent } from './sidebar.component';
 import { SidebarService } from './sidebar.service';
+import { FnParam } from '@angular/compiler/src/output/output_ast';
 
 class MockSidebarService {
   getSidebarState = jasmine.createSpy('getSidebarState');
@@ -17,6 +19,14 @@ class MockRouter {
     subscribe: (fn: (value: Data) => void) => fn(null as any),
   };
 }
+class MockActivatedRoute {
+  snapshot = {
+    queryParams: { q: '' },
+  };
+  queryParams = {
+    subscribe: (fn: (value: Data) => void) => fn({ q: '' } as any),
+  };
+}
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -24,11 +34,12 @@ describe('SidebarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, PerfectScrollbarModule],
+      imports: [RouterTestingModule, PerfectScrollbarModule, FormsModule],
       declarations: [SidebarComponent],
       providers: [
         { provide: SidebarService, useClass: MockSidebarService },
         { provide: Router, useClass: MockRouter },
+        { provide: ActivatedRoute, useClass: MockActivatedRoute },
       ],
     }).compileComponents();
   }));

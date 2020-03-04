@@ -7,6 +7,7 @@ export const UserSchema = new Schema(
     name: {
       type: Schema.Types.String,
       required: true,
+      index: true,
     },
     username: {
       type: Schema.Types.String,

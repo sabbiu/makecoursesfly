@@ -16,6 +16,7 @@ import { ModalComponent } from './modal/modal.component';
 import { ModalFooterComponent } from './modal/modal-footer.component';
 import { LinkPreviewComponent } from './link-preview/link-preview.component';
 import { AddHttpPipe } from '../pipes/add-http.pipe';
+import { FormsModule } from '@angular/forms';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -37,6 +38,7 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     BsDropdownModule.forRoot(),
     PerfectScrollbarModule,
     ModalModule.forRoot(),
+    FormsModule,
   ],
   providers: [
     {

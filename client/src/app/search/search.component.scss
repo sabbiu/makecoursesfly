@@ -1,0 +1,16 @@
+.form-control-borderless {
+  border: none;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.btn-accent {
+  background-color: #980303;
+  color: white;
+}

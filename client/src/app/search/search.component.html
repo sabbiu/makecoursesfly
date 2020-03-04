@@ -1,0 +1,41 @@
+<div class="row justify-content-center pb-3">
+  <div class="col-12 col-md-10 col-lg-8">
+    <form class="card card-sm" #form="ngForm" (ngSubmit)="onSubmit()">
+      <div class="card-body row no-gutters align-items-center">
+        <div class="col-auto">
+          <i class="fas fa-search text-body"></i>
+        </div>
+        <div class="col">
+          <input [(ngModel)]="q" class="form-control form-control-borderless" type="search"
+            placeholder="Search courses, tags or username" name="search">
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-accent" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div *ngIf="!!route.snapshot.queryParams.q">
+  <ul class="nav nav-tabs nav-fill">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/search','posts']" [queryParams]="{q:q}"
+        [ngClass]="{active: path === PATHS.POSTS}">Posts</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/search','tags']" [queryParams]="{q:q}"
+        [ngClass]="{active: path === PATHS.TAGS}">Tags</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/search','people']" [queryParams]="{q:q}"
+        [ngClass]="{active: path === PATHS.PEOPLE}">People</a>
+    </li>
+  </ul>
+  <app-post-list *ngIf="path === PATHS.POSTS" from="search"></app-post-list>
+  <app-tag-list *ngIf="path === PATHS.TAGS" from="search">
+  </app-tag-list>
+  <app-people *ngIf="path === PATHS.PEOPLE" from="search"></app-people>
+</div>
+<div *ngIf="!route.snapshot.queryParams.q" class="d-flex justify-content-center">
+  Enter and submit your search term
+</div>

@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../core/store/app.reducer';
 import * as UsersActions from '../store/users.actions';
 import { User } from 'src/app/auth/user.model';
-
-const INITIAL_OFFSET = 0;
-const INITIAL_LIMIT = 20;
+import { SearchService } from 'src/app/search/search.service';
 
 @Component({
   selector: 'app-people',
@@ -14,31 +12,43 @@ const INITIAL_LIMIT = 20;
   styleUrls: ['./people.component.scss'],
 })
 export class PeopleComponent implements OnInit {
+  @Input() from: string;
+
   loading: boolean;
   users: User[] = [];
   usersCount: number;
   usersEnd: boolean;
   usersSub: Subscription;
-  offset = INITIAL_OFFSET;
-  limit = INITIAL_LIMIT;
+  overrideSub: Subscription;
+  offset: number;
+  limit: number;
   throttle = 300;
   scrollDistance = 0.3;
 
-  constructor(private store: Store<fromApp.AppState>) {}
+  constructor(
+    private store: Store<fromApp.AppState>,
+    private searchService: SearchService
+  ) {}
 
   ngOnInit() {
-    this.store.dispatch(
-      new UsersActions.GetUsersStart(
-        { offset: this.offset, limit: this.limit },
-        true
-      )
-    );
+    if (this.from === 'search') {
+      this.overrideSub = this.searchService.peopleFilterOverride$.subscribe(
+        overrideFilters =>
+          this.store.dispatch(
+            new UsersActions.GetUsersStart({ ...overrideFilters }, true)
+          )
+      );
+    } else {
+      this.store.dispatch(new UsersActions.GetUsersStart({}, true));
+    }
 
     this.usersSub = this.store.select('users').subscribe(usersState => {
       this.loading = usersState.usersLoading;
       this.users = usersState.users;
       this.usersEnd = usersState.usersEnd;
       this.usersCount = usersState.usersCount;
+      this.offset = usersState.usersFilters.offset;
+      this.limit = usersState.usersFilters.limit;
     });
   }
 
@@ -46,15 +56,15 @@ export class PeopleComponent implements OnInit {
     if (!this.loading && !this.usersEnd) {
       this.offset += this.limit;
       this.store.dispatch(
-        new UsersActions.GetUsersStart({
-          offset: this.offset,
-          limit: this.limit,
-        })
+        new UsersActions.GetUsersStart({ offset: this.offset })
       );
     }
   }
 
   ngOnDestroy() {
     this.usersSub.unsubscribe();
+    if (this.overrideSub) {
+      this.overrideSub.unsubscribe();
+    }
   }
 }

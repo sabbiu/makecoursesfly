@@ -7,9 +7,6 @@ import * as OpinionsActions from '../opinions/store/opinions.actions';
 import { Feed } from './feed.interfaces';
 import { UsersService } from '../users/users.service';
 
-const INITIAL_OFFSET = 0;
-const INITIAL_LIMIT = 20;
-
 @Component({
   selector: 'app-feed',
   templateUrl: './feed.component.html',
@@ -24,8 +21,8 @@ export class FeedComponent implements OnInit, OnDestroy {
   feedEnd: boolean;
   feedSub: Subscription;
   overrideSub: Subscription;
-  offset = INITIAL_OFFSET;
-  limit = INITIAL_LIMIT;
+  offset: number;
+  limit: number;
   throttle = 300;
   scrollDistance = 0.3;
   postId: string;
@@ -40,23 +37,13 @@ export class FeedComponent implements OnInit, OnDestroy {
     if (this.from === 'profile') {
       this.overrideSub = this.usersService.feedFilterOverride$.subscribe(
         overrideFilters => {
-          this.offset = INITIAL_OFFSET;
-          this.limit = INITIAL_LIMIT;
           this.store.dispatch(
-            new OpinionsActions.GetOpinionsStart(
-              { offset: this.offset, limit: this.limit, ...overrideFilters },
-              true
-            )
+            new OpinionsActions.GetOpinionsStart({ ...overrideFilters }, true)
           );
         }
       );
     } else {
-      this.store.dispatch(
-        new OpinionsActions.GetOpinionsStart(
-          { offset: this.offset, limit: this.limit },
-          true
-        )
-      );
+      this.store.dispatch(new OpinionsActions.GetOpinionsStart({}, true));
     }
 
     this.feedSub = this.store.select('opinions').subscribe(opinionsState => {
@@ -64,6 +51,8 @@ export class FeedComponent implements OnInit, OnDestroy {
       this.feed = opinionsState.feed;
       this.feedEnd = opinionsState.feedEnd;
       this.feedCount = opinionsState.feedCount;
+      this.offset = opinionsState.feedFilters.offset;
+      this.limit = opinionsState.feedFilters.limit;
     });
   }
 
@@ -73,7 +62,6 @@ export class FeedComponent implements OnInit, OnDestroy {
       this.store.dispatch(
         new OpinionsActions.GetOpinionsStart({
           offset: this.offset,
-          limit: this.limit,
         })
       );
     }

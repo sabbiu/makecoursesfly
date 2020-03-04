@@ -6,9 +6,6 @@ import { Opinion } from '../opinion.model';
 import * as OpinionsActions from '../store/opinions.actions';
 import { ActivatedRoute } from '@angular/router';
 
-const INITIAL_OFFSET = 0;
-const INITIAL_LIMIT = 20;
-
 @Component({
   selector: 'app-opinion-list',
   templateUrl: './opinion-list.component.html',
@@ -20,8 +17,8 @@ export class OpinionListComponent implements OnInit, OnDestroy {
   opinionsCount: number;
   opinionsEnd: boolean;
   opinionsSub: Subscription;
-  offset = INITIAL_OFFSET;
-  limit = INITIAL_LIMIT;
+  offset: number;
+  limit: number;
   throttle = 300;
   scrollDistance = 0.3;
   postId: string;
@@ -37,11 +34,7 @@ export class OpinionListComponent implements OnInit, OnDestroy {
         this.postId = params.id;
 
         this.store.dispatch(
-          new OpinionsActions.GetPostOpinionsStart(
-            { offset: this.offset, limit: this.limit },
-            this.postId,
-            true
-          )
+          new OpinionsActions.GetPostOpinionsStart({}, this.postId, true)
         );
       }
     });
@@ -53,6 +46,8 @@ export class OpinionListComponent implements OnInit, OnDestroy {
         this.opinions = opinionsState.opinions;
         this.opinionsEnd = opinionsState.opinionsEnd;
         this.opinionsCount = opinionsState.opinionsCount;
+        this.offset = opinionsState.opinionsFilters.offset;
+        this.limit = opinionsState.opinionsFilters.limit;
       });
   }
 
@@ -61,7 +56,7 @@ export class OpinionListComponent implements OnInit, OnDestroy {
       this.offset += this.limit;
       this.store.dispatch(
         new OpinionsActions.GetPostOpinionsStart(
-          { offset: this.offset, limit: this.limit },
+          { offset: this.offset },
           this.postId
         )
       );

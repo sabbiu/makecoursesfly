@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { TagWithAnalytics } from '../tags.interfaces';
 import * as fromApp from '../../core/store/app.reducer';
 import * as TagsActions from '../store/tags.actions';
-
-const INITIAL_OFFSET = 0;
-const INITIAL_LIMIT = 20;
+import { SearchService } from 'src/app/search/search.service';
 
 @Component({
   selector: 'app-tag-list',
@@ -14,31 +12,43 @@ const INITIAL_LIMIT = 20;
   styleUrls: ['./tag-list.component.scss'],
 })
 export class TagListComponent implements OnInit, OnDestroy {
+  @Input() from: string;
+
   loading: boolean;
   tags: TagWithAnalytics[] = [];
   tagsCount: number;
   tagsEnd: boolean;
   tagsSub: Subscription;
-  offset = INITIAL_OFFSET;
-  limit = INITIAL_LIMIT;
+  overrideSub: Subscription;
+  offset: number;
+  limit: number;
   throttle = 300;
   scrollDistance = 0.3;
 
-  constructor(private store: Store<fromApp.AppState>) {}
+  constructor(
+    private store: Store<fromApp.AppState>,
+    private searchService: SearchService
+  ) {}
 
   ngOnInit() {
-    this.store.dispatch(
-      new TagsActions.GetTagsStart(
-        { offset: this.offset, limit: this.limit },
-        true
-      )
-    );
+    if (this.from === 'search') {
+      this.overrideSub = this.searchService.tagFilterOverride$.subscribe(
+        overrideFilters =>
+          this.store.dispatch(
+            new TagsActions.GetTagsStart({ ...overrideFilters }, true)
+          )
+      );
+    } else {
+      this.store.dispatch(new TagsActions.GetTagsStart({}, true));
+    }
 
     this.tagsSub = this.store.select('tags').subscribe(tagsState => {
       this.loading = tagsState.tagsLoading;
       this.tags = tagsState.tags;
       this.tagsEnd = tagsState.tagsEnd;
       this.tagsCount = tagsState.tagsCount;
+      this.offset = tagsState.tagsFilters.offset;
+      this.limit = tagsState.tagsFilters.limit;
     });
   }
 
@@ -46,12 +56,15 @@ export class TagListComponent implements OnInit, OnDestroy {
     if (!this.loading && !this.tagsEnd) {
       this.offset += this.limit;
       this.store.dispatch(
-        new TagsActions.GetTagsStart({ offset: this.offset, limit: this.limit })
+        new TagsActions.GetTagsStart({ offset: this.offset })
       );
     }
   }
 
   ngOnDestroy() {
     this.tagsSub.unsubscribe();
+    if (this.overrideSub) {
+      this.overrideSub.unsubscribe();
+    }
   }
 }
