@@ -13,10 +13,7 @@ export interface UsersState {
 }
 
 const initialState: UsersState = {
-  usersFilters: {
-    offset: 2,
-    limit: 5,
-  },
+  usersFilters: { offset: 0, limit: 10 },
   usersLoading: false,
   users: [],
   usersEnd: false,

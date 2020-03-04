@@ -25,7 +25,7 @@ const initialState: PostsState = {
   urlMdLoading: false,
   postLoading: false,
   post: null,
-  postsFilters: { offset: 2, limit: 5 },
+  postsFilters: { offset: 0, limit: 20 },
   postsLoading: false,
   posts: [],
   postsEnd: false,

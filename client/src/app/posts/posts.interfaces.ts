@@ -22,6 +22,7 @@ export interface PostWithUrlMetadata {
 }
 
 export interface GetPostsFilter {
+  search?: string;
   offset?: number;
   limit?: number;
   tags?: string[];

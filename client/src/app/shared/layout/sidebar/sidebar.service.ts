@@ -126,6 +126,16 @@ export class SidebarService {
         routerLink: '/posts/new',
         protected: true,
       },
+      {
+        title: 'Others',
+        type: 'header',
+      },
+      {
+        title: 'FAQ',
+        icon: 'fa fa-question-circle',
+        type: 'simple',
+        routerLink: '/faq',
+      },
     ];
     return initialMenus.filter(menu => (menu.protected ? !!this.user : true));
   }

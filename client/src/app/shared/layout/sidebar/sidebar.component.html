@@ -19,14 +19,17 @@
       </a>
       <div class="sidebar-search">
         <div>
-          <div class="input-group">
-            <input type="text" class="form-control search-menu" placeholder="Search... (To Do)">
-            <div class="input-group-append">
-              <span class="input-group-text">
-                <i class="fa fa-search" aria-hidden="true"></i>
-              </span>
+          <form #form="ngForm" (ngSubmit)="onSearch()">
+            <div class="input-group">
+              <input type="text" class="form-control search-menu" placeholder="Search..." [(ngModel)]="search"
+                name="search">
+              <div class="input-group-append">
+                <span class="input-group-text">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </span>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       <div class="sidebar-menu">

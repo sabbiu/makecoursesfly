@@ -6,9 +6,7 @@ import * as fromApp from '../../core/store/app.reducer';
 import * as PostsActions from '../store/posts.actions';
 import { Post } from '../post.model';
 import { TagsService } from '../../tags/tags.service';
-
-const INITIAL_OFFSET = 0;
-const INITIAL_LIMIT = 20;
+import { SearchService } from 'src/app/search/search.service';
 
 @Component({
   selector: 'app-post-list',
@@ -24,38 +22,35 @@ export class PostListComponent implements OnInit, OnDestroy {
   postsEnd: boolean;
   postsSub: Subscription;
   overrideSub: Subscription;
-  offset = INITIAL_OFFSET;
-  limit = INITIAL_LIMIT;
+  offset: number;
+  limit: number;
   throttle = 300;
   scrollDistance = 0.3;
 
   constructor(
     private store: Store<fromApp.AppState>,
     private router: Router,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
     if (this.from === 'tags') {
       this.overrideSub = this.tagsService.filterOverride$.subscribe(
-        overrideFilters => {
-          this.offset = INITIAL_OFFSET;
-          this.limit = INITIAL_LIMIT;
+        overrideFilters =>
           this.store.dispatch(
-            new PostsActions.GetPostsStart(
-              { offset: this.offset, limit: this.limit, ...overrideFilters },
-              true
-            )
-          );
-        }
+            new PostsActions.GetPostsStart({ ...overrideFilters }, true)
+          )
+      );
+    } else if (this.from === 'search') {
+      this.overrideSub = this.searchService.postFilterOverride$.subscribe(
+        overrideFilters =>
+          this.store.dispatch(
+            new PostsActions.GetPostsStart({ ...overrideFilters }, true)
+          )
       );
     } else {
-      this.store.dispatch(
-        new PostsActions.GetPostsStart(
-          { offset: this.offset, limit: this.limit },
-          true
-        )
-      );
+      this.store.dispatch(new PostsActions.GetPostsStart({}, true));
     }
 
     this.postsSub = this.store.select('posts').subscribe(postsState => {
@@ -63,6 +58,8 @@ export class PostListComponent implements OnInit, OnDestroy {
       this.posts = postsState.posts;
       this.postsEnd = postsState.postsEnd;
       this.postsCount = postsState.postsCount;
+      this.offset = postsState.postsFilters.offset;
+      this.limit = postsState.postsFilters.limit;
     });
   }
 
@@ -70,10 +67,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     if (!this.loading && !this.postsEnd) {
       this.offset += this.limit;
       this.store.dispatch(
-        new PostsActions.GetPostsStart({
-          offset: this.offset,
-          limit: this.limit,
-        })
+        new PostsActions.GetPostsStart({ offset: this.offset })
       );
     }
   }

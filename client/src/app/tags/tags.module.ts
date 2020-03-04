@@ -9,6 +9,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 @NgModule({
   declarations: [TagDetailComponent, TagListComponent],
   imports: [CommonModule, TagsRoutingModule, PostsModule, InfiniteScrollModule],
-  exports: [TagsRoutingModule],
+  exports: [TagsRoutingModule, TagListComponent],
 })
 export class TagsModule {}

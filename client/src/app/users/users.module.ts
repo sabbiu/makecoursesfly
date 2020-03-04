@@ -16,6 +16,6 @@ import { FeedModule } from '../feed/feed.module';
     PostsModule,
     FeedModule,
   ],
-  exports: [UsersRoutingModule],
+  exports: [UsersRoutingModule, PeopleComponent],
 })
 export class UsersModule {}

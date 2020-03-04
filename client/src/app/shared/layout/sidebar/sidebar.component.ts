@@ -7,7 +7,7 @@ import {
   animate,
 } from '@angular/animations';
 import { Subscription } from 'rxjs';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { SidebarService } from './sidebar.service';
 
 @Component({
@@ -26,10 +26,12 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private menusSub: Subscription;
   menus = [];
   activeRoute: string;
+  search: string;
 
   constructor(
     public sidebarService: SidebarService,
-    private readonly router: Router
+    private readonly router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -44,6 +46,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.activeRoute = event.url;
       }
     });
+
+    this.search = this.route.snapshot.queryParams.q || '';
+    this.route.queryParams.subscribe(queryParams => {
+      this.search = queryParams.q || '';
+    });
+  }
+
+  onSearch() {
+    if (this.router.url.startsWith('/search/')) {
+      this.router.navigate([], { queryParams: { q: this.search } });
+    } else {
+      this.router.navigate(['/search', 'posts'], {
+        queryParams: { q: this.search },
+      });
+    }
   }
 
   getSideBarState() {

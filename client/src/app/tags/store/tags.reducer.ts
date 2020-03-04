@@ -19,10 +19,7 @@ const initialState: TagsState = {
   autocompleteData: [],
   tagLoading: false,
   tag: null,
-  tagsFilters: {
-    offset: 2,
-    limit: 5,
-  },
+  tagsFilters: { offset: 0, limit: 20 },
   tagsLoading: false,
   tags: [],
   tagsEnd: false,
